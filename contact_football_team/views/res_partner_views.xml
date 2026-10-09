@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_football_team" model="ir.ui.view">
+        <field name="name">res.partner.form.football.team</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="football_team_id" placeholder="Select a football team..."/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_list_football_team" model="ir.ui.view">
+        <field name="name">res.partner.list.football.team</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="/*" position="inside">
+                <field name="football_team_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search_football_team" model="ir.ui.view">
+        <field name="name">res.partner.search.football.team</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="football_team_id"/>
+            </xpath>
+            <xpath expr="//search" position="inside">
+                <filter string="Has Football Team" name="has_football_team"
+                        domain="[('football_team_id', '!=', False)]"/>
+                <filter string="Football Team" name="group_football_team"
+                        context="{'group_by': 'football_team_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

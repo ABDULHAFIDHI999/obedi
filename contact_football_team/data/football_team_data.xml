@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="team_simba_sc" model="football.team">
+        <field name="name">Simba SC</field>
+        <field name="short_name">SIM</field>
+        <field name="country_id" ref="base.tz"/>
+        <field name="league">NBC Premier League</field>
+        <field name="stadium">Benjamin Mkapa Stadium</field>
+        <field name="founded_year">1936</field>
+        <field name="color">1</field>
+    </record>
+    <record id="team_young_africans" model="football.team">
+        <field name="name">Young Africans SC (Yanga)</field>
+        <field name="short_name">YAN</field>
+        <field name="country_id" ref="base.tz"/>
+        <field name="league">NBC Premier League</field>
+        <field name="stadium">Benjamin Mkapa Stadium</field>
+        <field name="founded_year">1935</field>
+        <field name="color">10</field>
+    </record>
+    <record id="team_azam_fc" model="football.team">
+        <field name="name">Azam FC</field>
+        <field name="short_name">AZA</field>
+        <field name="country_id" ref="base.tz"/>
+        <field name="league">NBC Premier League</field>
+        <field name="stadium">Azam Complex</field>
+        <field name="founded_year">2004</field>
+        <field name="color">2</field>
+    </record>
+    <record id="team_real_madrid" model="football.team">
+        <field name="name">Real Madrid CF</field>
+        <field name="short_name">RMA</field>
+        <field name="country_id" ref="base.es"/>
+        <field name="league">La Liga</field>
+        <field name="stadium">Santiago Bernabéu</field>
+        <field name="founded_year">1902</field>
+    </record>
+    <record id="team_barcelona" model="football.team">
+        <field name="name">FC Barcelona</field>
+        <field name="short_name">BAR</field>
+        <field name="country_id" ref="base.es"/>
+        <field name="league">La Liga</field>
+        <field name="stadium">Spotify Camp Nou</field>
+        <field name="founded_year">1899</field>
+    </record>
+    <record id="team_manchester_united" model="football.team">
+        <field name="name">Manchester United FC</field>
+        <field name="short_name">MUN</field>
+        <field name="country_id" ref="base.uk"/>
+        <field name="league">Premier League</field>
+        <field name="stadium">Old Trafford</field>
+        <field name="founded_year">1878</field>
+    </record>
+    <record id="team_arsenal" model="football.team">
+        <field name="name">Arsenal FC</field>
+        <field name="short_name">ARS</field>
+        <field name="country_id" ref="base.uk"/>
+        <field name="league">Premier League</field>
+        <field name="stadium">Emirates Stadium</field>
+        <field name="founded_year">1886</field>
+    </record>
+    <record id="team_chelsea" model="football.team">
+        <field name="name">Chelsea FC</field>
+        <field name="short_name">CHE</field>
+        <field name="country_id" ref="base.uk"/>
+        <field name="league">Premier League</field>
+        <field name="stadium">Stamford Bridge</field>
+        <field name="founded_year">1905</field>
+    </record>
+    <record id="team_liverpool" model="football.team">
+        <field name="name">Liverpool FC</field>
+        <field name="short_name">LIV</field>
+        <field name="country_id" ref="base.uk"/>
+        <field name="league">Premier League</field>
+        <field name="stadium">Anfield</field>
+        <field name="founded_year">1892</field>
+    </record>
+</odoo>

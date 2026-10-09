@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="football_team_view_list" model="ir.ui.view">
+        <field name="name">football.team.list</field>
+        <field name="model">football.team</field>
+        <field name="arch" type="xml">
+            <list string="Football Teams">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="short_name" optional="show"/>
+                <field name="country_id" optional="show"/>
+                <field name="league" optional="show"/>
+                <field name="stadium" optional="hide"/>
+                <field name="founded_year" optional="hide"/>
+                <field name="partner_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="football_team_view_form" model="ir.ui.view">
+        <field name="name">football.team.form</field>
+        <field name="model">football.team</field>
+        <field name="arch" type="xml">
+            <form string="Football Team">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_supporters" type="object"
+                                class="oe_stat_button" icon="fa-users">
+                            <field name="partner_count" widget="statinfo" string="Supporters"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="logo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Simba SC"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="short_name"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                            <field name="league"/>
+                        </group>
+                        <group>
+                            <field name="stadium"/>
+                            <field name="founded_year"/>
+                            <field name="website" widget="url"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Supporters" name="supporters">
+                            <field name="partner_ids" readonly="1">
+                                <list>
+                                    <field name="display_name" string="Name"/>
+                                    <field name="email"/>
+                                    <field name="phone"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="football_team_view_kanban" model="ir.ui.view">
+        <field name="name">football.team.kanban</field>
+        <field name="model">football.team</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside>
+                            <field name="logo" widget="image" options="{'size': [64, 64]}"/>
+                        </aside>
+                        <main class="ms-2">
+                            <field name="name" class="fw-bold fs-5"/>
+                            <field name="league"/>
+                            <field name="country_id"/>
+                            <div>
+                                <i class="fa fa-users me-1" title="Supporters"/>
+                                <field name="partner_count"/>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="football_team_view_search" model="ir.ui.view">
+        <field name="name">football.team.search</field>
+        <field name="model">football.team</field>
+        <field name="arch" type="xml">
+            <search string="Football Teams">
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('short_name', 'ilike', self)]"/>
+                <field name="league"/>
+                <field name="country_id"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Country" name="group_country" context="{'group_by': 'country_id'}"/>
+                    <filter string="League" name="group_league" context="{'group_by': 'league'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="football_team_action" model="ir.actions.act_window">
+        <field name="name">Football Teams</field>
+        <field name="res_model">football.team</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a football team</p>
+            <p>Football teams can then be selected on any contact.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_football_team"
+              name="Football Teams"
+              parent="contacts.res_partner_menu_config"
+              action="football_team_action"
+              sequence="30"/>
+</odoo>
