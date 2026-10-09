@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_football_team_user,football.team user,football.team,base.group_user,cru,
+access_football_team_manager,football.team manager,football.team,base.group_partner_manager,crud,
+access_football_team_portal,football.team portal,football.team,base.group_portal,r,
