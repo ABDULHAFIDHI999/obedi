@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_kpi_scorecard" model="ir.actions.report">
+        <field name="name">Scorecard</field>
+        <field name="model">kpi.scorecard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">kpi_management.report_kpi_scorecard</field>
+        <field name="print_report_name">'Scorecard - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_kpi_scorecard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_kpi_scorecard">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 t-field="doc.name"/>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-4">
+                                <strong>Evaluated:</strong> <span t-field="doc.user_id"/><br/>
+                                <strong>Reviewer:</strong> <span t-field="doc.reviewer_id"/>
+                            </div>
+                            <div class="col-4">
+                                <strong>Period:</strong> <span t-field="doc.date_from"/> → <span t-field="doc.date_to"/><br/>
+                                <strong>Status:</strong> <span t-field="doc.state"/>
+                            </div>
+                            <div class="col-4 text-end">
+                                <div class="fs-3 fw-bold"><t t-out="'%.1f' % doc.score"/> %</div>
+                                <span t-field="doc.rating"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th class="text-end">Weight</th>
+                                    <th class="text-end">Target</th>
+                                    <th class="text-end">Actual</th>
+                                    <th class="text-end">Achievement</th>
+                                    <th class="text-end">Score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td>
+                                        <span t-field="line.kpi_id"/>
+                                        <div t-if="line.comment" class="text-muted small" t-field="line.comment"/>
+                                    </td>
+                                    <td class="text-end"><t t-out="'%.0f' % line.weight"/></td>
+                                    <td class="text-end"><t t-out="'%.2f' % line.target_value"/> <t t-out="line.unit_label or ''"/></td>
+                                    <td class="text-end"><t t-out="'%.2f' % line.actual_value"/> <t t-out="line.unit_label or ''"/></td>
+                                    <td class="text-end"><t t-out="'%.1f' % line.achievement"/> %</td>
+                                    <td class="text-end"><t t-out="'%.2f' % line.weighted_score"/></td>
+                                    <td><span t-field="line.status"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold">
+                                    <td>Total</td>
+                                    <td class="text-end"><t t-out="'%.0f' % doc.total_weight"/></td>
+                                    <td colspan="3"/>
+                                    <td class="text-end"><t t-out="'%.1f' % doc.score"/> %</td>
+                                    <td/>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div t-if="doc.note" class="mt-4">
+                            <strong>Comments</strong>
+                            <div t-field="doc.note"/>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-6">Evaluated signature: ______________________</div>
+                            <div class="col-6 text-end">Reviewer signature: ______________________</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,18 @@
+id,name,model_id,group_id/id,operation,domain
+access_kpi_category_user,kpi.category user,kpi.category,kpi_management.group_kpi_user,r,
+access_kpi_category_manager,kpi.category manager,kpi.category,kpi_management.group_kpi_manager,crud,
+kpi_category_comp_rule,KPI category multi-company,kpi.category,,crud,"[('company_id', 'in', company_ids + [False])]"
+kpi_definition_rule_user,KPI user: own and shared KPIs,kpi.definition,kpi_management.group_kpi_user,r,"['|', '|', '|', ('responsible_id', '=', user.id), ('user_ids', 'in', user.id), ('message_partner_ids', 'in', [user.partner_id.id]), ('scorecard_line_ids.scorecard_id.user_id', '=', user.id)]"
+access_kpi_definition_manager,kpi.definition manager,kpi.definition,kpi_management.group_kpi_manager,crud,
+kpi_definition_comp_rule,KPI multi-company,kpi.definition,,crud,"[('company_id', 'in', company_ids + [False])]"
+kpi_value_rule_user_read,KPI user: read results of visible KPIs,kpi.value,kpi_management.group_kpi_user,r,"['|', '|', ('kpi_id.responsible_id', '=', user.id), ('kpi_id.user_ids', 'in', user.id), ('kpi_id.message_partner_ids', 'in', [user.partner_id.id])]"
+kpi_value_rule_user_write,KPI user: record results of own KPIs,kpi.value,kpi_management.group_kpi_user,cu,"[('kpi_id.responsible_id', '=', user.id)]"
+access_kpi_value_manager,kpi.value manager,kpi.value,kpi_management.group_kpi_manager,crud,
+kpi_value_comp_rule,KPI result multi-company,kpi.value,,crud,"[('company_id', 'in', company_ids + [False])]"
+kpi_scorecard_rule_user,KPI user: own scorecards,kpi.scorecard,kpi_management.group_kpi_user,r,"['|', ('user_id', '=', user.id), ('reviewer_id', '=', user.id)]"
+access_kpi_scorecard_manager,kpi.scorecard manager,kpi.scorecard,kpi_management.group_kpi_manager,crud,
+kpi_scorecard_comp_rule,KPI scorecard multi-company,kpi.scorecard,,crud,"[('company_id', 'in', company_ids)]"
+kpi_scorecard_line_rule_user,KPI user: lines of own scorecards,kpi.scorecard.line,kpi_management.group_kpi_user,r,"['|', ('scorecard_id.user_id', '=', user.id), ('scorecard_id.reviewer_id', '=', user.id)]"
+access_kpi_scorecard_line_manager,kpi.scorecard.line manager,kpi.scorecard.line,kpi_management.group_kpi_manager,crud,
+kpi_scorecard_line_comp_rule,KPI scorecard line multi-company,kpi.scorecard.line,,crud,"[('company_id', 'in', company_ids)]"
+access_kpi_compute_wizard_manager,kpi.compute.wizard manager,kpi.compute.wizard,kpi_management.group_kpi_manager,crud,

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="kpi_demo_new_contacts" model="kpi.definition">
+        <field name="name">New Contacts</field>
+        <field name="code">CUS-001</field>
+        <field name="category_id" ref="kpi_category_customer"/>
+        <field name="frequency">monthly</field>
+        <field name="target_type">higher</field>
+        <field name="target_value">20</field>
+        <field name="computation_mode">aggregate</field>
+        <field name="source_model_id" ref="base.model_res_partner"/>
+        <field name="date_field_id" ref="base.field_res_partner__create_date"/>
+        <field name="aggregation">count</field>
+        <field name="source_domain">[('active', '=', True)]</field>
+        <field name="period_aggregation">sum</field>
+    </record>
+
+    <record id="kpi_demo_company_ratio" model="kpi.definition">
+        <field name="name">Share of New Company Contacts</field>
+        <field name="code">CUS-002</field>
+        <field name="category_id" ref="kpi_category_customer"/>
+        <field name="frequency">monthly</field>
+        <field name="unit">percent</field>
+        <field name="target_value">40</field>
+        <field name="computation_mode">ratio</field>
+        <field name="source_model_id" ref="base.model_res_partner"/>
+        <field name="date_field_id" ref="base.field_res_partner__create_date"/>
+        <field name="source_domain">[('is_company', '=', True)]</field>
+        <field name="denominator_domain">[]</field>
+        <field name="period_aggregation">avg</field>
+    </record>
+
+    <record id="kpi_demo_ticket_time" model="kpi.definition">
+        <field name="name">Average Resolution Time</field>
+        <field name="code">PRO-001</field>
+        <field name="category_id" ref="kpi_category_process"/>
+        <field name="frequency">monthly</field>
+        <field name="unit">hours</field>
+        <field name="target_type">lower</field>
+        <field name="target_value">24</field>
+        <field name="warning_threshold">75</field>
+        <field name="computation_mode">manual</field>
+        <field name="period_aggregation">avg</field>
+    </record>
+
+    <record id="kpi_demo_ticket_time_m1" model="kpi.value">
+        <field name="kpi_id" ref="kpi_demo_ticket_time"/>
+        <field name="date_from" eval="(DateTime.today() - relativedelta(months=2, day=1)).strftime('%Y-%m-%d')"/>
+        <field name="date_to" eval="(DateTime.today() - relativedelta(months=1, day=1, days=1)).strftime('%Y-%m-%d')"/>
+        <field name="actual_value">30</field>
+        <field name="target_value">24</field>
+    </record>
+    <record id="kpi_demo_ticket_time_m2" model="kpi.value">
+        <field name="kpi_id" ref="kpi_demo_ticket_time"/>
+        <field name="date_from" eval="(DateTime.today() - relativedelta(months=1, day=1)).strftime('%Y-%m-%d')"/>
+        <field name="date_to" eval="(DateTime.today() - relativedelta(day=1, days=1)).strftime('%Y-%m-%d')"/>
+        <field name="actual_value">22</field>
+        <field name="target_value">24</field>
+    </record>
+
+    <record id="kpi_demo_scorecard" model="kpi.scorecard">
+        <field name="name">Demo Scorecard</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="date_from" eval="(DateTime.today() - relativedelta(months=2, day=1)).strftime('%Y-%m-%d')"/>
+        <field name="date_to" eval="(DateTime.today() + relativedelta(day=31)).strftime('%Y-%m-%d')"/>
+    </record>
+    <record id="kpi_demo_scorecard_line_1" model="kpi.scorecard.line">
+        <field name="scorecard_id" ref="kpi_demo_scorecard"/>
+        <field name="kpi_id" ref="kpi_demo_new_contacts"/>
+        <field name="weight">50</field>
+        <field name="target_value">60</field>
+        <field name="actual_value">45</field>
+    </record>
+    <record id="kpi_demo_scorecard_line_2" model="kpi.scorecard.line">
+        <field name="scorecard_id" ref="kpi_demo_scorecard"/>
+        <field name="kpi_id" ref="kpi_demo_ticket_time"/>
+        <field name="weight">50</field>
+        <field name="target_value">24</field>
+        <field name="actual_value">26</field>
+    </record>
+</odoo>

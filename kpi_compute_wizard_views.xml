@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="kpi_compute_wizard_view_form" model="ir.ui.view">
+        <field name="name">kpi.compute.wizard.form</field>
+        <field name="model">kpi.compute.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Compute KPIs">
+                <p class="text-muted">
+                    Computes (or refreshes) every period of the selected automatic KPIs between the two dates.
+                    Leave KPIs empty to compute all automatic KPIs. Results switched to <b>Manual</b> are never overwritten.
+                </p>
+                <group>
+                    <field name="kpi_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <label for="date_from" string="Range"/>
+                    <div class="o_row">
+                        <field name="date_from"/>
+                        <span>→</span>
+                        <field name="date_to"/>
+                    </div>
+                    <field name="alert"/>
+                </group>
+                <footer>
+                    <button name="action_compute" type="object" string="Compute" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kpi_compute_wizard" model="ir.actions.act_window">
+        <field name="name">Compute KPIs</field>
+        <field name="res_model">kpi.compute.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

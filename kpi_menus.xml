@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_kpi_root"
+              name="KPI"
+              web_icon="kpi_management,static/description/icon.png"
+              groups="kpi_management.group_kpi_user"
+              sequence="55"/>
+
+    <menuitem id="menu_kpi_dashboard" name="Dashboard" parent="menu_kpi_root"
+              action="action_kpi_dashboard" sequence="10"/>
+
+    <menuitem id="menu_kpi_operations" name="Performance" parent="menu_kpi_root" sequence="20"/>
+    <menuitem id="menu_kpi_definition" name="KPIs" parent="menu_kpi_operations"
+              action="action_kpi_definition" sequence="10"/>
+    <menuitem id="menu_kpi_value" name="Results" parent="menu_kpi_operations"
+              action="action_kpi_value" sequence="20"/>
+    <menuitem id="menu_kpi_scorecard" name="Scorecards" parent="menu_kpi_operations"
+              action="action_kpi_scorecard" sequence="30"/>
+
+    <menuitem id="menu_kpi_reporting" name="Reporting" parent="menu_kpi_root" sequence="30"/>
+    <menuitem id="menu_kpi_analysis" name="KPI Analysis" parent="menu_kpi_reporting"
+              action="action_kpi_value_analysis" sequence="10"/>
+
+    <menuitem id="menu_kpi_config" name="Configuration" parent="menu_kpi_root"
+              groups="kpi_management.group_kpi_manager" sequence="90"/>
+    <menuitem id="menu_kpi_category" name="Categories" parent="menu_kpi_config"
+              action="action_kpi_category" sequence="10"/>
+    <menuitem id="menu_kpi_compute" name="Compute KPIs" parent="menu_kpi_config"
+              action="action_kpi_compute_wizard" sequence="20"/>
+</odoo>

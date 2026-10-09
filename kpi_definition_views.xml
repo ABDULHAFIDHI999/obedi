@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard -->
+    <record id="kpi_definition_view_kanban" model="ir.ui.view">
+        <field name="name">kpi.definition.kanban</field>
+        <field name="model">kpi.definition</field>
+        <field name="arch" type="xml">
+            <kanban highlight_color="color" default_group_by="category_id" sample="1">
+                <progressbar field="last_status" colors='{"on_track": "success", "at_risk": "warning", "off_track": "danger"}'/>
+                <field name="last_status"/>
+                <field name="trend"/>
+                <field name="code"/>
+                <templates>
+                    <t t-name="menu">
+                        <a role="menuitem" type="object" name="action_view_values" class="dropdown-item">Results</a>
+                        <t t-if="widget.editable"><a role="menuitem" type="open" class="dropdown-item">Edit</a></t>
+                        <div role="separator" class="dropdown-divider"/>
+                        <field name="color" widget="kanban_color_picker"/>
+                    </t>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <field name="name" class="fw-bold fs-5"/>
+                                <div class="text-muted small" t-if="record.code.raw_value">
+                                    <field name="code"/> · <field name="frequency"/>
+                                </div>
+                            </div>
+                            <span t-if="record.trend.raw_value == 'up'" class="fa fa-arrow-up text-success" title="Improving"/>
+                            <span t-if="record.trend.raw_value == 'down'" class="fa fa-arrow-down text-danger" title="Worsening"/>
+                            <span t-if="record.trend.raw_value == 'flat'" class="fa fa-arrow-right text-muted" title="Stable"/>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-1 mt-2">
+                            <field name="last_value" class="fs-3 fw-bold"/>
+                            <field name="unit_label" class="text-muted"/>
+                            <span class="text-muted ms-2">/ <field name="last_target"/></span>
+                        </div>
+                        <field name="last_achievement" widget="progressbar"/>
+                        <footer>
+                            <field name="last_status" widget="badge"
+                                   decoration-success="last_status == 'on_track'"
+                                   decoration-warning="last_status == 'at_risk'"
+                                   decoration-danger="last_status == 'off_track'"/>
+                            <div class="d-flex ms-auto align-items-center">
+                                <field name="activity_ids" widget="kanban_activity"/>
+                                <field name="responsible_id" widget="many2one_avatar_user" class="ms-1"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="kpi_definition_view_list" model="ir.ui.view">
+        <field name="name">kpi.definition.list</field>
+        <field name="model">kpi.definition</field>
+        <field name="arch" type="xml">
+            <list string="KPIs" sample="1"
+                  decoration-success="last_status == 'on_track'"
+                  decoration-warning="last_status == 'at_risk'"
+                  decoration-danger="last_status == 'off_track'">
+                <field name="sequence" widget="handle"/>
+                <field name="code" optional="show"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="frequency"/>
+                <field name="computation_mode" optional="show"/>
+                <field name="target_value"/>
+                <field name="last_value"/>
+                <field name="unit_label" string="Unit" optional="show"/>
+                <field name="last_achievement" widget="progressbar"/>
+                <field name="last_status" widget="badge"
+                       decoration-success="last_status == 'on_track'"
+                       decoration-warning="last_status == 'at_risk'"
+                       decoration-danger="last_status == 'off_track'"/>
+                <field name="trend" optional="hide"/>
+                <field name="responsible_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="kpi_definition_view_form" model="ir.ui.view">
+        <field name="name">kpi.definition.form</field>
+        <field name="model">kpi.definition</field>
+        <field name="arch" type="xml">
+            <form string="KPI">
+                <header>
+                    <button name="action_compute_current" type="object" string="Compute Current Period"
+                            class="btn-primary" groups="kpi_management.group_kpi_manager"
+                            invisible="computation_mode == 'manual'"/>
+                    <button name="action_compute_current" type="object" string="Create Current Period"
+                            class="btn-primary" groups="kpi_management.group_kpi_manager"
+                            invisible="computation_mode != 'manual'"/>
+                    <button name="action_open_compute_wizard" type="object" string="Compute History"
+                            groups="kpi_management.group_kpi_manager"
+                            invisible="computation_mode == 'manual'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_values" type="object" class="oe_stat_button" icon="fa-line-chart">
+                            <field name="value_count" widget="statinfo" string="Results"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Monthly Revenue"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="e.g. FIN-001"/>
+                            <field name="category_id"/>
+                            <field name="responsible_id" widget="many2one_avatar_user"/>
+                            <field name="user_ids" widget="many2many_avatar_user"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="frequency"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="last_date" invisible="not last_date"/>
+                            <field name="last_status" widget="badge" invisible="not last_status"
+                                   decoration-success="last_status == 'on_track'"
+                                   decoration-warning="last_status == 'at_risk'"
+                                   decoration-danger="last_status == 'off_track'"/>
+                            <field name="last_achievement" widget="progressbar" invisible="not last_status"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Target" name="target">
+                            <group>
+                                <group string="Target">
+                                    <field name="target_type" widget="radio"/>
+                                    <label for="target_value"/>
+                                    <div class="o_row">
+                                        <field name="target_value"/>
+                                        <field name="unit_label" nolabel="1"/>
+                                    </div>
+                                    <label for="warning_threshold"/>
+                                    <div class="o_row">
+                                        <field name="warning_threshold"/>
+                                        <span>%</span>
+                                    </div>
+                                </group>
+                                <group string="Unit">
+                                    <field name="unit"/>
+                                    <field name="unit_custom" invisible="unit != 'custom'" required="unit == 'custom'"/>
+                                    <field name="currency_id" invisible="unit != 'currency'" required="unit == 'currency'"/>
+                                    <field name="period_aggregation"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Computation" name="computation">
+                            <group>
+                                <group>
+                                    <field name="computation_mode" widget="radio"/>
+                                    <field name="alert_off_track"/>
+                                </group>
+                                <group invisible="computation_mode == 'manual'">
+                                    <field name="source_model_id" options="{'no_create': True}"
+                                           required="computation_mode != 'manual'"/>
+                                    <field name="source_model_name" invisible="1"/>
+                                    <field name="date_field_id" options="{'no_create': True}"
+                                           required="computation_mode != 'manual'"
+                                           invisible="not source_model_id"/>
+                                    <field name="aggregation" invisible="computation_mode != 'aggregate'"
+                                           required="computation_mode == 'aggregate'"/>
+                                    <field name="value_field_id" options="{'no_create': True}"
+                                           invisible="computation_mode != 'aggregate' or aggregation == 'count' or not source_model_id"
+                                           required="computation_mode == 'aggregate' and aggregation != 'count'"/>
+                                    <field name="multiplier"/>
+                                </group>
+                            </group>
+                            <group invisible="computation_mode == 'manual' or not source_model_id">
+                                <field name="denominator_domain" widget="domain"
+                                       options="{'model': 'source_model_name', 'in_dialog': True}"
+                                       invisible="computation_mode != 'ratio'"/>
+                                <field name="source_domain" widget="domain" string="Filter"
+                                       options="{'model': 'source_model_name', 'in_dialog': True}"/>
+                            </group>
+                            <div class="text-muted" invisible="computation_mode != 'manual'">
+                                Results are entered manually in the <b>Results</b> list for each period.
+                            </div>
+                            <div class="text-muted" invisible="computation_mode != 'ratio'">
+                                Value = number of records matching <b>Filter</b> (and the denominator filter)
+                                ÷ number of records matching <b>Denominator Filter</b> × 100.
+                            </div>
+                        </page>
+                        <page string="Results" name="results">
+                            <field name="value_ids" context="{'default_kpi_id': id}">
+                                <list editable="bottom"
+                                      decoration-success="status == 'on_track'"
+                                      decoration-warning="status == 'at_risk'"
+                                      decoration-danger="status == 'off_track'">
+                                    <field name="period_label"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="actual_value"/>
+                                    <field name="target_value"/>
+                                    <field name="achievement" widget="progressbar"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'on_track'"
+                                           decoration-warning="status == 'at_risk'"
+                                           decoration-danger="status == 'off_track'"/>
+                                    <field name="source"/>
+                                    <field name="note" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Definition, formula, data source, why it matters..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="kpi_definition_view_search" model="ir.ui.view">
+        <field name="name">kpi.definition.search</field>
+        <field name="model">kpi.definition</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="category_id"/>
+                <field name="responsible_id"/>
+                <filter string="My KPIs" name="my_kpis" domain="[('responsible_id', '=', uid)]"/>
+                <separator/>
+                <filter string="On Track" name="on_track" domain="[('last_status', '=', 'on_track')]"/>
+                <filter string="At Risk" name="at_risk" domain="[('last_status', '=', 'at_risk')]"/>
+                <filter string="Off Track" name="off_track" domain="[('last_status', '=', 'off_track')]"/>
+                <separator/>
+                <filter string="Automatic" name="automatic" domain="[('computation_mode', '!=', 'manual')]"/>
+                <filter string="Manual" name="manual" domain="[('computation_mode', '=', 'manual')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'last_status'}"/>
+                    <filter string="Responsible" name="group_responsible" context="{'group_by': 'responsible_id'}"/>
+                    <filter string="Frequency" name="group_frequency" context="{'group_by': 'frequency'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_kpi_dashboard" model="ir.actions.act_window">
+        <field name="name">KPI Dashboard</field>
+        <field name="res_model">kpi.definition</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="kpi_definition_view_kanban"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first KPI</p>
+            <p>Define what you measure, the target, and let Odoo compute it for every period.</p>
+        </field>
+    </record>
+
+    <record id="action_kpi_definition" model="ir.actions.act_window">
+        <field name="name">KPIs</field>
+        <field name="res_model">kpi.definition</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_id" ref="kpi_definition_view_list"/>
+    </record>
+
+    <record id="action_kpi_definition_compute" model="ir.actions.server">
+        <field name="name">Compute Current Period</field>
+        <field name="model_id" ref="model_kpi_definition"/>
+        <field name="binding_model_id" ref="model_kpi_definition"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="group_ids" eval="[(4, ref('kpi_management.group_kpi_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">records.action_compute_current()</field>
+    </record>
+</odoo>
