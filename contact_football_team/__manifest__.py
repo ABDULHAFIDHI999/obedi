@@ -2,6 +2,7 @@
     'name': 'Contact Football Team',
     'version': '20.0.1.0.0',
     'category': 'Sales/CRM',
+    'sequence': 10,
     'summary': 'Add a Football Team option on contacts',
     'description': """
 Contact Football Team
@@ -22,5 +23,5 @@ Contact Football Team
         'views/res_partner_views.xml',
     ],
     'installable': True,
-    'application': False,
+    'application': True,
 }
