@@ -17,7 +17,7 @@ Contact Football Team
     'license': 'LGPL-3',
     'depends': ['contacts'],
     'data': [
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/football_team_data.xml',
         'views/football_team_views.xml',
         'views/res_partner_views.xml',

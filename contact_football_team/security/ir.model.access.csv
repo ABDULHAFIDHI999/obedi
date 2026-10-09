@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_football_team_user,football.team user,model_football_team,base.group_user,1,1,1,0
-access_football_team_manager,football.team manager,model_football_team,base.group_partner_manager,1,1,1,1
-access_football_team_portal,football.team portal,model_football_team,base.group_portal,1,0,0,0
