@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inject a "Track Your Parcel" hero section at the top of the website homepage, so
+         customers can track a parcel right from the home page without any login. Submitting
+         the form takes them to the full /track results page (reusing the same controller). -->
+    <template id="website_homepage_tracking_section" inherit_id="website.homepage" name="Homepage Parcel Tracking">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class">oe_structure</attribute>
+        </xpath>
+        <xpath expr="//div[@id='wrap']" position="inside">
+            <section class="o_parcel_home_hero" data-snippet="s_parcel_home_hero">
+                <div class="container">
+                    <div class="o_parcel_home_hero_inner text-center">
+                        <h1 t-esc="res_company.name or 'Track Your Parcel'"/>
+                        <p class="o_parcel_home_hero_subtitle">Track Your Parcel</p>
+                        <p class="text-muted">Enter your tracking number to see its current status. No account needed.</p>
+                        <form method="get" action="/track" class="o_parcel_track_form">
+                            <input type="text" name="tracking_number" class="form-control o_parcel_track_input"
+                                   placeholder="e.g. PKL/DAR/2026/00001" required="required"/>
+                            <button type="submit" class="btn btn-primary o_parcel_track_btn">TRACK PARCEL</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//div[@id='wrap']" position="inside">
+            <section class="o_parcel_home_agent" data-snippet="s_parcel_home_agent">
+                <div class="container">
+                    <div class="o_parcel_home_agent_inner text-center">
+                        <h2>Agent Parcel Arrival</h2>
+                        <p class="text-muted">For company agents: authorize a parcel's arrival and payment on collection using your Parcel Number and Agent Code.</p>
+                        <form method="post" action="/agent/arrive" class="o_parcel_agent_form">
+                            <input type="text" name="tracking_number" class="form-control o_parcel_track_input"
+                                   placeholder="Parcel Number, e.g. PKL/DAR/2026/00001" required="required"/>
+                            <input type="text" name="agent_code" class="form-control o_parcel_track_input"
+                                   placeholder="Agent Code, e.g. AGT-00001" required="required"/>
+                            <button type="submit" class="btn btn-outline-primary o_parcel_track_btn">CHECK / AUTHORIZE ARRIVAL</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+    <template id="website_track_page" name="Track Your Parcel">
+        <t t-call="website.layout">
+            <div class="o_parcel_track_page">
+                <div class="o_parcel_track_header text-center">
+                    <h1>Track Your Parcel</h1>
+                    <p class="text-muted">Enter your tracking number to see its current status. No account needed.</p>
+                </div>
+
+                <form method="get" action="/track" class="o_parcel_track_form">
+                    <input type="text" name="tracking_number" class="form-control o_parcel_track_input"
+                           placeholder="e.g. PKL/DAR/2026/00001" t-att-value="tracking_number"/>
+                    <button type="submit" class="btn btn-primary o_parcel_track_btn">TRACK PARCEL</button>
+                </form>
+
+                <t t-if="searched and not result">
+                    <div class="alert alert-warning o_parcel_track_notfound" role="alert">
+                        No parcel found for tracking number "<t t-esc="tracking_number"/>". Please check the number and try again.
+                    </div>
+                </t>
+
+                <t t-if="result">
+                    <div class="o_parcel_track_result">
+                        <h3>PARCEL <t t-esc="result['tracking_number']"/></h3>
+                        <div class="o_parcel_route">
+                            <span class="o_parcel_route_point"><t t-esc="result['origin']"/></span>
+                            <span class="o_parcel_route_arrow">&#8594;</span>
+                            <span class="o_parcel_route_status"><t t-esc="result['status']"/></span>
+                            <span class="o_parcel_route_arrow">&#8594;</span>
+                            <span class="o_parcel_route_point"><t t-esc="result['destination']"/></span>
+                        </div>
+
+                        <table class="o_parcel_track_table">
+                            <tr t-if="result['date_received']">
+                                <td>Date Received</td><td><t t-esc="result['date_received']"/></td>
+                            </tr>
+                            <tr t-if="result['expected_arrival_date']">
+                                <td>Estimated Arrival</td><td><t t-esc="result['expected_arrival_date']"/></td>
+                            </tr>
+                            <tr>
+                                <td>Current Status</td><td><strong><t t-esc="result['status']"/></strong></td>
+                            </tr>
+                        </table>
+
+                        <ul class="o_parcel_timeline">
+                            <li t-foreach="result['timeline']" t-as="step"
+                                t-attf-class="o_parcel_timeline_step #{step['done'] and 'o_parcel_timeline_done' or 'o_parcel_timeline_pending'}">
+                                <span class="o_parcel_timeline_icon">
+                                    <t t-if="step['done']">&#10003;</t>
+                                    <t t-else="">&#9675;</t>
+                                </span>
+                                <span class="o_parcel_timeline_label"><t t-esc="step['label']"/></span>
+                            </li>
+                        </ul>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- Public, login-free form for a destination agent to authorize a parcel's arrival and, once
+         arrived, to authorize the payment the receiver pays on collection. Agents identify
+         themselves with their own Agent Code (generated when they were registered as an Agent in
+         the backend). No Odoo account needed. Resubmitting the same parcel+code after arrival
+         lands back on this same page, now showing the arrival status and a payment authorization
+         form instead of an error. -->
+    <template id="website_agent_arrive_page" name="Agent Parcel Arrival">
+        <t t-call="website.layout">
+            <div class="o_parcel_track_page o_parcel_agent_arrive_page">
+                <div class="o_parcel_track_header text-center">
+                    <h1>Agent Parcel Arrival</h1>
+                    <p class="text-muted">Enter the parcel number and your agent code to check status, authorize arrival, or authorize payment.</p>
+                </div>
+
+                <form method="post" action="/agent/arrive" class="o_parcel_agent_form">
+                    <div class="mb-3">
+                        <label class="form-label" for="tracking_number">Parcel Number</label>
+                        <input type="text" id="tracking_number" name="tracking_number" class="form-control"
+                               placeholder="e.g. PKL/DAR/2026/00001" t-att-value="tracking_number" required="required"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="agent_code">Agent Code</label>
+                        <input type="text" id="agent_code" name="agent_code" class="form-control"
+                               placeholder="e.g. AGT-00001" t-att-value="agent_code" required="required"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">CHECK / AUTHORIZE ARRIVAL</button>
+                </form>
+
+                <t t-if="result and result.get('error')">
+                    <div class="alert alert-danger o_parcel_agent_result" role="alert">
+                        <t t-esc="result['error']"/>
+                    </div>
+                </t>
+
+                <t t-if="result and result.get('success')">
+                    <div class="o_parcel_agent_status">
+                        <t t-if="result.get('message')">
+                            <div class="alert alert-success" role="alert">
+                                <t t-esc="result['message']"/>
+                            </div>
+                        </t>
+
+                        <h3>PARCEL <t t-esc="result['tracking_number']"/></h3>
+                        <div class="o_parcel_route">
+                            <span class="o_parcel_route_point"><t t-esc="result['origin']"/></span>
+                            <span class="o_parcel_route_arrow">&#8594;</span>
+                            <span class="o_parcel_route_status"><t t-esc="result['status']"/></span>
+                            <span class="o_parcel_route_arrow">&#8594;</span>
+                            <span class="o_parcel_route_point"><t t-esc="result['destination']"/></span>
+                        </div>
+
+                        <table class="o_parcel_track_table">
+                            <tr>
+                                <td>Payment Status</td>
+                                <td><strong><t t-esc="result['payment_status_label']"/></strong></td>
+                            </tr>
+                            <tr t-if="result['outstanding']">
+                                <td>Amount Outstanding</td>
+                                <td><t t-esc="result['outstanding']"/></td>
+                            </tr>
+                        </table>
+
+                        <t t-if="result.get('can_authorize_payment')">
+                            <div class="o_parcel_agent_payment_form">
+                                <h4>Authorize Payment</h4>
+                                <p class="text-muted">Use this if the receiver is paying on collection.</p>
+                                <form method="post" action="/agent/arrive">
+                                    <input type="hidden" name="authorize_payment" value="1"/>
+                                    <input type="hidden" name="tracking_number" t-att-value="result['tracking_number']"/>
+                                    <input type="hidden" name="agent_code" t-att-value="agent_code"/>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="amount">Amount Received</label>
+                                        <input type="number" step="0.01" min="0.01" id="amount" name="amount"
+                                               class="form-control" t-att-value="result['outstanding']" required="required"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="payment_method">Payment Method</label>
+                                        <select id="payment_method" name="payment_method" class="form-select">
+                                            <option value="cash">Cash</option>
+                                            <option value="mobile_money">Mobile Money</option>
+                                            <option value="bank_transfer">Bank Transfer</option>
+                                            <option value="card">Card</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">AUTHORIZE PAYMENT</button>
+                                </form>
+                            </div>
+                        </t>
+
+                        <t t-if="result.get('last_payment_id')">
+                            <a class="btn btn-secondary w-100 mt-2" target="_blank"
+                               t-attf-href="/agent/receipt?payment_id=#{result['last_payment_id']}&amp;tracking_number=#{result['tracking_number']}&amp;agent_code=#{result.get('agent_code', agent_code)}">
+                                PRINT PAYMENT RECEIPT
+                            </a>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

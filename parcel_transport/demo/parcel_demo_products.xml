@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="product_category_parcel_types" model="product.category">
+        <field name="name">Parcel Types</field>
+    </record>
+
+    <record id="product_parcel_small_box" model="product.product">
+        <field name="name">Small Box</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="parcel_is_type" eval="True"/>
+        <field name="categ_id" ref="product_category_parcel_types"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+    </record>
+
+    <record id="product_parcel_medium_box" model="product.product">
+        <field name="name">Medium Box</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="parcel_is_type" eval="True"/>
+        <field name="categ_id" ref="product_category_parcel_types"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+    </record>
+
+    <record id="product_parcel_large_box" model="product.product">
+        <field name="name">Large Box</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="parcel_is_type" eval="True"/>
+        <field name="categ_id" ref="product_category_parcel_types"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+    </record>
+
+    <record id="product_parcel_envelope" model="product.product">
+        <field name="name">Document Envelope</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="parcel_is_type" eval="True"/>
+        <field name="categ_id" ref="product_category_parcel_types"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+    </record>
+
+    <record id="product_parcel_pallet" model="product.product">
+        <field name="name">Pallet</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="parcel_is_type" eval="True"/>
+        <field name="categ_id" ref="product_category_parcel_types"/>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+    </record>
+
+</odoo>

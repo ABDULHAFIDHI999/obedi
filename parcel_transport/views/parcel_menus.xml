@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_parcel_root" name="Parcel Transport" web_icon="parcel_transport,static/description/icon.png"
+              sequence="5"/>
+
+    <menuitem id="menu_parcel_dashboard" name="Dashboard" parent="menu_parcel_root"
+              action="action_parcel_dashboard" sequence="1"
+              groups="parcel_transport.group_parcel_finance_agent"/>
+
+    <menuitem id="menu_parcel_order" name="Parcels" parent="menu_parcel_root"
+              action="action_parcel_order" sequence="2"/>
+
+    <menuitem id="menu_parcel_trip" name="Trips" parent="menu_parcel_root"
+              action="action_parcel_trip" sequence="3"/>
+
+    <menuitem id="menu_parcel_agent" name="Agents" parent="menu_parcel_root"
+              action="action_parcel_agent" sequence="4"
+              groups="parcel_transport.group_parcel_dispatcher"/>
+
+    <menuitem id="menu_parcel_payment" name="Payments" parent="menu_parcel_root"
+              action="action_parcel_payment" sequence="5"
+              groups="parcel_transport.group_parcel_finance_agent,parcel_transport.group_parcel_dispatcher"/>
+
+    <menuitem id="menu_parcel_sms_history" name="SMS History" parent="menu_parcel_root"
+              action="action_parcel_sms_history" sequence="6"/>
+
+    <menuitem id="menu_parcel_configuration" name="Configuration" parent="menu_parcel_root" sequence="90"
+              groups="parcel_transport.group_parcel_administrator"/>
+
+    <menuitem id="menu_parcel_configuration_users" name="Users" parent="menu_parcel_configuration"
+              action="base.action_res_users" sequence="20"
+              groups="parcel_transport.group_parcel_administrator"/>
+
+    <menuitem id="menu_parcel_configuration_settings" name="Settings" parent="menu_parcel_configuration"
+              action="action_parcel_config_settings" sequence="99"
+              groups="parcel_transport.group_parcel_administrator"/>
+
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="user_origin_agent_dar" model="res.users">
+        <field name="name">Receiving Officer (Dar)</field>
+        <field name="login">origin.agent.dar@amase.demo</field>
+        <field name="email">origin.agent.dar@amase.demo</field>
+        <field name="group_ids" eval="[(4, ref('parcel_transport.group_parcel_origin_agent'))]"/>
+    </record>
+
+    <record id="user_dispatcher" model="res.users">
+        <field name="name">Dispatcher</field>
+        <field name="login">dispatcher@amase.demo</field>
+        <field name="email">dispatcher@amase.demo</field>
+        <field name="group_ids" eval="[(4, ref('parcel_transport.group_parcel_dispatcher'))]"/>
+    </record>
+
+    <record id="user_finance_agent" model="res.users">
+        <field name="name">Finance Manager</field>
+        <field name="login">finance.agent@amase.demo</field>
+        <field name="email">finance.agent@amase.demo</field>
+        <field name="group_ids" eval="[(4, ref('parcel_transport.group_parcel_finance_agent'))]"/>
+    </record>
+
+</odoo>

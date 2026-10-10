@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="parcel_transport.ParcelDashboard">
+    <div class="o_parcel_dashboard">
+        <div class="o_parcel_dashboard_header">
+            <h2>Parcel Transportation Dashboard</h2>
+        </div>
+        <div t-if="state.loading" class="o_parcel_dashboard_loading">Loading...</div>
+        <t t-else="">
+            <div class="o_parcel_kpi_row">
+                <div class="o_parcel_kpi_card" t-on-click="() => this.openParcels([])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.total"/></div>
+                    <div class="o_parcel_kpi_label">Total Parcels</div>
+                </div>
+                <div class="o_parcel_kpi_card" t-on-click="() => this.openParcels([['state','=','received']])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.received"/></div>
+                    <div class="o_parcel_kpi_label">Received</div>
+                </div>
+                <div class="o_parcel_kpi_card" t-on-click="() => this.openParcels([['state','=','in_transit']])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.in_transit"/></div>
+                    <div class="o_parcel_kpi_label">In Transit</div>
+                </div>
+                <div class="o_parcel_kpi_card" t-on-click="() => this.openParcels([['state','=','arrived']])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.arrived"/></div>
+                    <div class="o_parcel_kpi_label">Arrived</div>
+                </div>
+                <div class="o_parcel_kpi_card" t-on-click="() => this.openParcels([['state','=','ready_collection']])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.ready_collection"/></div>
+                    <div class="o_parcel_kpi_label">Ready for Collection</div>
+                </div>
+                <div class="o_parcel_kpi_card" t-on-click="() => this.openParcels([['state','=','delivered']])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.delivered"/></div>
+                    <div class="o_parcel_kpi_label">Delivered</div>
+                </div>
+                <div class="o_parcel_kpi_card o_parcel_kpi_warning" t-on-click="() => this.openParcels([['payment_status','=','unpaid']])">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.unpaid"/></div>
+                    <div class="o_parcel_kpi_label">Unpaid</div>
+                </div>
+                <div class="o_parcel_kpi_card o_parcel_kpi_good">
+                    <div class="o_parcel_kpi_value"><t t-esc="state.kpis.revenue"/></div>
+                    <div class="o_parcel_kpi_label">Revenue</div>
+                </div>
+            </div>
+
+            <div class="o_parcel_chart_row">
+                <div class="o_parcel_chart_card">
+                    <h4>Parcels by Destination</h4>
+                    <div class="o_parcel_barlist">
+                        <div t-foreach="state.byDestination" t-as="d" t-key="d.label" class="o_parcel_bar_row">
+                            <span class="o_parcel_bar_label" t-esc="d.label"/>
+                            <div class="o_parcel_bar_track">
+                                <div class="o_parcel_bar_fill o_parcel_bar_series1" t-attf-style="width: {{d.pct}}%"/>
+                            </div>
+                            <span class="o_parcel_bar_value" t-esc="d.count"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_parcel_chart_card">
+                    <h4>Parcels by Status</h4>
+                    <div class="o_parcel_barlist">
+                        <div t-foreach="state.byStatus" t-as="s" t-key="s.key" class="o_parcel_bar_row">
+                            <span class="o_parcel_bar_label" t-esc="s.label"/>
+                            <div class="o_parcel_bar_track">
+                                <div class="o_parcel_bar_fill o_parcel_bar_series2" t-attf-style="width: {{s.pct}}%"/>
+                            </div>
+                            <span class="o_parcel_bar_value" t-esc="s.count"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="o_parcel_chart_row">
+                <div class="o_parcel_chart_card">
+                    <h4>Revenue by Destination</h4>
+                    <div class="o_parcel_barlist">
+                        <div t-foreach="state.revenueByDestination" t-as="d" t-key="d.label" class="o_parcel_bar_row">
+                            <span class="o_parcel_bar_label" t-esc="d.label"/>
+                            <div class="o_parcel_bar_track">
+                                <div class="o_parcel_bar_fill o_parcel_bar_series1" t-attf-style="width: {{d.pct}}%"/>
+                            </div>
+                            <span class="o_parcel_bar_value" t-esc="d.amount"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_parcel_chart_card">
+                    <h4>Daily Parcel Volume (last 14 days)</h4>
+                    <div class="o_parcel_barlist o_parcel_barlist_vertical">
+                        <div t-foreach="state.dailyVolume" t-as="d" t-key="d.label" class="o_parcel_vbar_col">
+                            <div class="o_parcel_vbar_track">
+                                <div class="o_parcel_vbar_fill" t-attf-style="height: {{d.pct}}%" t-att-title="d.count"/>
+                            </div>
+                            <span class="o_parcel_vbar_label" t-esc="d.label"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

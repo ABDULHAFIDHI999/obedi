@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parcel_sms_history_form" model="ir.ui.view">
+        <field name="name">parcel.sms.history.form</field>
+        <field name="model">parcel.sms.history</field>
+        <field name="arch" type="xml">
+            <form string="SMS">
+                <header>
+                    <button name="action_retry" string="Retry" type="object"
+                            invisible="state != 'failed'" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,sent,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="parcel_order_id"/>
+                            <field name="partner_id"/>
+                            <field name="phone"/>
+                            <field name="sms_type"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="response"/>
+                            <field name="error_message"/>
+                        </group>
+                    </group>
+                    <field name="message"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_parcel_sms_history_list" model="ir.ui.view">
+        <field name="name">parcel.sms.history.list</field>
+        <field name="model">parcel.sms.history</field>
+        <field name="arch" type="xml">
+            <list string="SMS History">
+                <field name="date"/>
+                <field name="parcel_order_id"/>
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="sms_type"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'sent'"
+                       decoration-danger="state == 'failed'"
+                       decoration-info="state == 'pending'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_parcel_sms_history_search" model="ir.ui.view">
+        <field name="name">parcel.sms.history.search</field>
+        <field name="model">parcel.sms.history</field>
+        <field name="arch" type="xml">
+            <search string="Search SMS">
+                <field name="phone"/>
+                <field name="parcel_order_id"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <group>
+                    <filter string="Type" name="group_type" context="{'group_by': 'sms_type'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_parcel_sms_history" model="ir.actions.act_window">
+        <field name="name">SMS History</field>
+        <field name="res_model">parcel.sms.history</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
