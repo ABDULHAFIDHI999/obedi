@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parcel_agent_form" model="ir.ui.view">
+        <field name="name">parcel.agent.form</field>
+        <field name="model">parcel.agent</field>
+        <field name="arch" type="xml">
+            <form string="Parcel Agent">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Salim Hassan"/></h1>
+                        <h3><field name="agent_code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="phone"/>
+                            <field name="station"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_parcel_agent_list" model="ir.ui.view">
+        <field name="name">parcel.agent.list</field>
+        <field name="model">parcel.agent</field>
+        <field name="arch" type="xml">
+            <list string="Parcel Agents">
+                <field name="agent_code"/>
+                <field name="name"/>
+                <field name="station"/>
+                <field name="phone"/>
+                <field name="user_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_parcel_agent_search" model="ir.ui.view">
+        <field name="name">parcel.agent.search</field>
+        <field name="model">parcel.agent</field>
+        <field name="arch" type="xml">
+            <search string="Search Agents">
+                <field name="name"/>
+                <field name="agent_code"/>
+                <field name="station"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_parcel_agent" model="ir.actions.act_window">
+        <field name="name">Agents</field>
+        <field name="res_model">parcel.agent</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first Agent</p>
+            <p>Each agent gets a unique code, used on the public "Agent Receiving" form on the website.</p>
+        </field>
+    </record>
+
+</odoo>

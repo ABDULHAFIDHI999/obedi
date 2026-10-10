@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_parcel" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.parcel.transport</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Parcel Transport" string="Parcel Transport" name="parcel_transport"
+                     groups="parcel_transport.group_parcel_administrator">
+                    <block title="SMS Notifications" id="parcel_sms_setting">
+                        <setting string="SMS Gateway"
+                                 help="Parcel notifications are sent through the SwalaSMS gateway. Configure the SwalaSMS credentials in its own Settings app.">
+                            <div class="content-group">
+                                <button name="%(swala_sms.action_swala_sms_config_settings)d" type="action"
+                                        string="Go to SwalaSMS Settings" class="btn-link"
+                                        icon="oi-arrow-right"/>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Delivery Policy" id="parcel_delivery_setting">
+                        <setting string="Require payment authorization before delivery"
+                                 help="When enabled, a parcel cannot be marked Delivered until its payment has been authorized.">
+                            <field name="parcel_require_payment_before_delivery"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_parcel_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'parcel_transport', 'bin_size': False}</field>
+    </record>
+</odoo>

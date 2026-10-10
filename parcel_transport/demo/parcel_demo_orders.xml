@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Builds a full, realistic demo scenario (parcels, trips, payments, SMS history)
+         by driving the real parcel.order / parcel.trip / parcel.payment business workflow. -->
+    <function model="parcel.order" name="_create_demo_scenario" eval="[]"/>
+
+</odoo>

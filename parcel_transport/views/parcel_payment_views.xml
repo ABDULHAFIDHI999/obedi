@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parcel_payment_form" model="ir.ui.view">
+        <field name="name">parcel.payment.form</field>
+        <field name="model">parcel.payment</field>
+        <field name="arch" type="xml">
+            <form string="Parcel Payment">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_authorize" string="Authorize Payment" type="object"
+                            invisible="state not in ('draft', 'confirmed')" class="oe_highlight"
+                            groups="parcel_transport.group_parcel_finance_agent"/>
+                    <button name="action_refund" string="Refund" type="object"
+                            invisible="state != 'authorized'"
+                            groups="parcel_transport.group_parcel_finance_agent"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('authorized', 'refunded', 'cancelled')"/>
+                    <button name="%(action_report_parcel_payment)d" string="Print Receipt" type="action"
+                            invisible="state not in ('authorized', 'refunded')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,authorized"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="parcel_order_id"/>
+                            <field name="partner_id"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                            <field name="payment_method"/>
+                        </group>
+                        <group>
+                            <field name="payment_date"/>
+                            <field name="reference"/>
+                            <field name="authorized_by" readonly="1"/>
+                            <field name="authorized_by_agent_id" readonly="1"/>
+                            <field name="authorization_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_parcel_payment_list" model="ir.ui.view">
+        <field name="name">parcel.payment.list</field>
+        <field name="model">parcel.payment</field>
+        <field name="arch" type="xml">
+            <list string="Parcel Payments">
+                <field name="name"/>
+                <field name="parcel_order_id"/>
+                <field name="partner_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="payment_method"/>
+                <field name="payment_date"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'authorized'"
+                       decoration-info="state == 'confirmed'"
+                       decoration-danger="state in ('cancelled', 'refunded')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_parcel_payment_search" model="ir.ui.view">
+        <field name="name">parcel.payment.search</field>
+        <field name="model">parcel.payment</field>
+        <field name="arch" type="xml">
+            <search string="Search Payments">
+                <field name="name"/>
+                <field name="parcel_order_id"/>
+                <field name="partner_id"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Payment Method" name="group_method" context="{'group_by': 'payment_method'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_parcel_payment" model="ir.actions.act_window">
+        <field name="name">Payments</field>
+        <field name="res_model">parcel.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first parcel payment</p>
+        </field>
+    </record>
+
+</odoo>

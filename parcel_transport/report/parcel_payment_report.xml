@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_parcel_payment" model="ir.actions.report">
+        <field name="name">Payment Receipt</field>
+        <field name="model">parcel.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">parcel_transport.report_parcel_payment_document</field>
+        <field name="print_report_name">'Payment Receipt - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_parcel_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_parcel_payment_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Payment Receipt</h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Receipt Number:</strong> <span t-field="o.name"/><br/>
+                                <strong>Payment Date:</strong> <span t-field="o.payment_date"/><br/>
+                                <strong>Payment Method:</strong> <span t-field="o.payment_method"/><br/>
+                                <strong>Status:</strong> <span t-field="o.state"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Parcel Tracking Number:</strong> <span t-field="o.parcel_order_id.tracking_number"/><br/>
+                                <strong>Origin:</strong> <span t-field="o.parcel_order_id.origin"/><br/>
+                                <strong>Destination:</strong> <span t-field="o.parcel_order_id.destination"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Reference</th>
+                                    <th>Amount</th>
+                                    <th>Authorized By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span t-field="o.partner_id"/></td>
+                                    <td><span t-field="o.reference"/></td>
+                                    <td><span t-field="o.amount"/></td>
+                                    <td>
+                                        <span t-field="o.authorized_by" t-if="o.authorized_by"/>
+                                        <span t-field="o.authorized_by_agent_id" t-if="o.authorized_by_agent_id"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p t-if="o.notes"><strong>Notes:</strong> <span t-field="o.notes"/></p>
+                        <p class="text-muted">Thank you for your payment. Keep this receipt as proof of payment.</p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

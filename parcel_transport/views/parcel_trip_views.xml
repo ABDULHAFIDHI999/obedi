@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parcel_trip_form" model="ir.ui.view">
+        <field name="name">parcel.trip.form</field>
+        <field name="model">parcel.trip</field>
+        <field name="arch" type="xml">
+            <form string="Trip">
+                <header>
+                    <button name="action_set_ready" string="Mark Ready" type="object"
+                            invisible="state != 'draft'" class="oe_highlight"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_dispatch" string="DISPATCH" type="object"
+                            invisible="state not in ('draft', 'ready')" class="oe_highlight"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_mark_arrived" string="MARK ARRIVED" type="object"
+                            invisible="state != 'in_transit'" class="oe_highlight"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_close" string="Close Trip" type="object"
+                            invisible="state != 'arrived'"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,ready,dispatched,in_transit,arrived,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-cubes" type="object" name="action_view_parcels">
+                            <field name="parcel_count" widget="statinfo" string="Parcels"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Route">
+                            <field name="origin"/>
+                            <field name="destination"/>
+                        </group>
+                        <group string="Bus &amp; Agent">
+                            <field name="bus_company"/>
+                            <field name="agent_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Schedule">
+                            <field name="departure_date"/>
+                            <field name="expected_arrival"/>
+                            <field name="actual_arrival" readonly="1"/>
+                        </group>
+                        <group string="Audit">
+                            <field name="dispatch_agent_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="parcel_ids"
+                           context="{'default_trip_id': id, 'default_origin': origin, 'default_destination': destination}">
+                        <list editable="bottom">
+                            <field name="name"/>
+                            <field name="tracking_number"/>
+                            <field name="sender_id"/>
+                            <field name="receiver_id"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_parcel_trip_list" model="ir.ui.view">
+        <field name="name">parcel.trip.list</field>
+        <field name="model">parcel.trip</field>
+        <field name="arch" type="xml">
+            <list string="Trips">
+                <field name="name"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <field name="bus_company"/>
+                <field name="agent_id"/>
+                <field name="departure_date"/>
+                <field name="parcel_count"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'closed'"
+                       decoration-info="state in ('in_transit', 'dispatched')"
+                       decoration-warning="state == 'arrived'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_parcel_trip_kanban" model="ir.ui.view">
+        <field name="name">parcel.trip.kanban</field>
+        <field name="model">parcel.trip</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click p-2">
+                            <strong><field name="name"/></strong>
+                            <div><field name="origin"/> &#8594; <field name="destination"/></div>
+                            <div class="text-muted"><field name="bus_company"/> - <field name="agent_id"/></div>
+                            <div><field name="parcel_count"/> parcel(s)</div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_parcel_trip_search" model="ir.ui.view">
+        <field name="name">parcel.trip.search</field>
+        <field name="model">parcel.trip</field>
+        <field name="arch" type="xml">
+            <search string="Search Trips">
+                <field name="name"/>
+                <field name="bus_company"/>
+                <field name="agent_id"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_parcel_trip" model="ir.actions.act_window">
+        <field name="name">Trips</field>
+        <field name="res_model">parcel.trip</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first Trip</p>
+        </field>
+    </record>
+
+</odoo>

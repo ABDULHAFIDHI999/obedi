@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parcel_order_form" model="ir.ui.view">
+        <field name="name">parcel.order.form</field>
+        <field name="model">parcel.order</field>
+        <field name="arch" type="xml">
+            <form string="Parcel Order">
+                <header>
+                    <button name="action_receive" string="RECEIVE PARCEL" type="object"
+                            class="oe_highlight" invisible="state != 'draft'"
+                            groups="parcel_transport.group_parcel_origin_agent"/>
+                    <button name="action_mark_ready_dispatch" string="MARK READY TO DISPATCH" type="object"
+                            class="oe_highlight" invisible="state != 'received'"
+                            groups="parcel_transport.group_parcel_origin_agent"/>
+                    <button name="action_open_payment_authorize_wizard" string="AUTHORIZE PAYMENT" type="object"
+                            class="oe_highlight" invisible="state in ('cancelled', 'returned', 'draft')"
+                            groups="parcel_transport.group_parcel_finance_agent,parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_open_arrival_wizard" string="AUTHORIZE ARRIVAL" type="object"
+                            class="oe_highlight" invisible="state != 'in_transit'"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_mark_ready_collection" string="MARK READY FOR COLLECTION" type="object"
+                            invisible="state != 'arrived'"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_start_delivery" string="START DELIVERY" type="object"
+                            invisible="state not in ('arrived', 'ready_collection')"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_open_delivery_wizard" string="AUTHORIZE DELIVERY" type="object"
+                            class="oe_highlight" invisible="state not in ('out_for_delivery', 'arrived', 'ready_collection')"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('delivered', 'cancelled', 'returned')"
+                            groups="parcel_transport.group_parcel_origin_agent,parcel_transport.group_parcel_dispatcher"
+                            confirm="Are you sure you want to cancel this parcel order?"/>
+                    <button name="action_return" string="Return" type="object"
+                            invisible="state not in ('arrived', 'ready_collection', 'out_for_delivery')"
+                            groups="parcel_transport.group_parcel_dispatcher"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,received,ready_dispatch,dispatched,in_transit,arrived,ready_collection,out_for_delivery,delivered"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger" invisible="state != 'cancelled'"/>
+                    <widget name="web_ribbon" title="Returned" bg_color="text-bg-warning" invisible="state != 'returned'"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-money" type="object" name="action_view_payments">
+                            <field name="payment_count" widget="statinfo" string="Payments"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-truck" type="object" name="action_view_trip"
+                                invisible="not trip_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Trip</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-comments" type="object" name="action_view_sms">
+                            <field name="sms_count" widget="statinfo" string="SMS History"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h3>
+                            <field name="tracking_number" readonly="1"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Sender / Receiver">
+                            <field name="sender_id"/>
+                            <field name="sender_phone"/>
+                            <field name="receiver_id"/>
+                            <field name="receiver_phone"/>
+                        </group>
+                        <group string="Route">
+                            <field name="origin" readonly="state != 'draft'"/>
+                            <field name="destination" readonly="state != 'draft'"/>
+                            <field name="trip_id"
+                                   context="{'default_origin': origin, 'default_destination': destination}"/>
+                            <field name="bus_company" readonly="1"/>
+                            <field name="agent_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Parcel">
+                            <field name="parcel_type_id"/>
+                            <field name="quantity"/>
+                            <field name="weight"/>
+                            <field name="dimensions"/>
+                            <field name="description"/>
+                        </group>
+                        <group string="Payment">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="transport_fee"/>
+                            <field name="amount_paid"/>
+                            <field name="payment_status" widget="badge"
+                                   decoration-success="payment_status == 'paid'"
+                                   decoration-warning="payment_status == 'partial'"
+                                   decoration-danger="payment_status == 'unpaid'"
+                                   decoration-info="payment_status == 'refunded'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Dates">
+                            <field name="user_id"/>
+                            <field name="create_date" readonly="1"/>
+                            <field name="expected_arrival_date"/>
+                            <field name="actual_arrival_date" readonly="1"/>
+                            <field name="delivery_date" readonly="1"/>
+                        </group>
+                        <group string="Audit">
+                            <field name="received_by" readonly="1"/>
+                            <field name="received_date" readonly="1"/>
+                            <field name="dispatched_by" readonly="1"/>
+                            <field name="dispatch_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Destination Authorization">
+                            <group>
+                                <group string="Arrival">
+                                    <field name="arrival_authorized_by" readonly="1"/>
+                                    <field name="arrival_authorized_by_agent_id" readonly="1"/>
+                                    <field name="arrival_authorization_date" readonly="1"/>
+                                    <field name="arrival_notes" readonly="1"/>
+                                    <field name="arrival_proof" widget="image" readonly="1" class="oe_avatar"/>
+                                </group>
+                                <group string="Delivery">
+                                    <field name="delivery_agent_id" readonly="1"/>
+                                    <field name="delivery_authorized_by" readonly="1"/>
+                                    <field name="delivery_authorized_by_agent_id" readonly="1"/>
+                                    <field name="delivery_authorization_date" readonly="1"/>
+                                    <field name="delivery_proof" widget="image" readonly="1" class="oe_avatar"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_parcel_order_list" model="ir.ui.view">
+        <field name="name">parcel.order.list</field>
+        <field name="model">parcel.order</field>
+        <field name="arch" type="xml">
+            <list string="Parcel Orders" decoration-danger="state == 'cancelled'" decoration-muted="state == 'returned'">
+                <field name="name"/>
+                <field name="tracking_number"/>
+                <field name="sender_id"/>
+                <field name="receiver_id"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <field name="trip_id"/>
+                <field name="transport_fee" sum="Total"/>
+                <field name="payment_status" widget="badge"
+                       decoration-success="payment_status == 'paid'"
+                       decoration-warning="payment_status == 'partial'"
+                       decoration-danger="payment_status == 'unpaid'"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'delivered'"
+                       decoration-info="state in ('in_transit', 'dispatched')"
+                       decoration-warning="state in ('arrived', 'ready_collection', 'out_for_delivery')"
+                       decoration-danger="state in ('cancelled', 'returned')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_parcel_order_kanban" model="ir.ui.view">
+        <field name="name">parcel.order.kanban</field>
+        <field name="model">parcel.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click p-2">
+                            <strong><field name="tracking_number"/></strong>
+                            <div><field name="sender_id"/> &#8594; <field name="receiver_id"/></div>
+                            <div class="text-muted">
+                                <field name="origin"/> &#8594; <field name="destination"/>
+                            </div>
+                            <div>
+                                <field name="payment_status" widget="badge"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_parcel_order_search" model="ir.ui.view">
+        <field name="name">parcel.order.search</field>
+        <field name="model">parcel.order</field>
+        <field name="arch" type="xml">
+            <search string="Search Parcel Orders">
+                <field name="name" string="Parcel Order"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('tracking_number', 'ilike', self), ('sender_phone', 'ilike', self)]"/>
+                <field name="tracking_number"/>
+                <field name="sender_id"/>
+                <field name="receiver_id"/>
+                <field name="sender_phone"/>
+                <field name="receiver_phone"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <field name="trip_id"/>
+                <separator/>
+                <filter string="In Transit" name="in_transit" domain="[('state', '=', 'in_transit')]"/>
+                <filter string="Arrived" name="arrived" domain="[('state', '=', 'arrived')]"/>
+                <filter string="Delivered" name="delivered" domain="[('state', '=', 'delivered')]"/>
+                <filter string="Unpaid" name="unpaid" domain="[('payment_status', '=', 'unpaid')]"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Origin" name="group_origin" context="{'group_by': 'origin'}"/>
+                    <filter string="Destination" name="group_destination" context="{'group_by': 'destination'}"/>
+                    <filter string="Payment Status" name="group_payment" context="{'group_by': 'payment_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_parcel_order" model="ir.actions.act_window">
+        <field name="name">Parcel Orders</field>
+        <field name="res_model">parcel.order</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_parcel_order_search"/>
+        <field name="context">{'search_default_group_state': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first Parcel Order</p>
+        </field>
+    </record>
+
+</odoo>

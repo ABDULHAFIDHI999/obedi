@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_parcel_order" model="ir.actions.report">
+        <field name="name">Parcel Receipt</field>
+        <field name="model">parcel.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">parcel_transport.report_parcel_order_document</field>
+        <field name="print_report_name">'Parcel Receipt - %s' % (object.tracking_number)</field>
+        <field name="binding_model_id" ref="model_parcel_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_parcel_order_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Parcel Receipt</h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Tracking Number:</strong> <span t-field="o.tracking_number"/><br/>
+                                <strong>Parcel Order:</strong> <span t-field="o.name"/><br/>
+                                <strong>Status:</strong> <span t-field="o.state"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Origin:</strong> <span t-field="o.origin"/><br/>
+                                <strong>Destination:</strong> <span t-field="o.destination"/><br/>
+                                <strong>Expected Arrival:</strong> <span t-field="o.expected_arrival_date"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Sender</th>
+                                    <th>Receiver</th>
+                                    <th>Parcel Type</th>
+                                    <th>Qty</th>
+                                    <th>Weight</th>
+                                    <th>Fee</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span t-field="o.sender_id"/><br/><span t-field="o.sender_phone"/></td>
+                                    <td><span t-field="o.receiver_id"/><br/><span t-field="o.receiver_phone"/></td>
+                                    <td><span t-field="o.parcel_type_id"/></td>
+                                    <td><span t-field="o.quantity"/></td>
+                                    <td><span t-field="o.weight"/> kg</td>
+                                    <td><span t-field="o.transport_fee"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-muted">Keep this receipt. Use your tracking number to follow your parcel on our website.</p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

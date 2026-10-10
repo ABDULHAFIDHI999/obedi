@@ -1,0 +1,177 @@
+.o_parcel_dashboard {
+    --pt-surface: #fcfcfb;
+    --pt-text-primary: #0b0b0b;
+    --pt-text-secondary: #52514e;
+    --pt-muted: #898781;
+    --pt-gridline: #e1e0d9;
+    --pt-border: rgba(11, 11, 11, 0.10);
+    --pt-series-1: #2a78d6;
+    --pt-series-2: #1baf7a;
+    --pt-good: #0ca30c;
+    --pt-warning: #fab219;
+
+    padding: 16px 24px;
+    color: var(--pt-text-primary);
+    background: var(--pt-surface);
+
+    @media (prefers-color-scheme: dark) {
+        &:not([data-theme="light"]) {
+            --pt-surface: #1a1a19;
+            --pt-text-primary: #ffffff;
+            --pt-text-secondary: #c3c2b7;
+            --pt-muted: #898781;
+            --pt-gridline: #2c2c2a;
+            --pt-border: rgba(255, 255, 255, 0.10);
+            --pt-series-1: #3987e5;
+            --pt-series-2: #199e70;
+            --pt-good: #0ca30c;
+            --pt-warning: #fab219;
+        }
+    }
+
+    .o_parcel_dashboard_header h2 {
+        margin-bottom: 16px;
+        font-weight: 600;
+    }
+
+    .o_parcel_kpi_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .o_parcel_kpi_card {
+        flex: 1 1 140px;
+        min-width: 140px;
+        border: 1px solid var(--pt-border);
+        border-radius: 8px;
+        padding: 14px 16px;
+        cursor: pointer;
+        background: var(--pt-surface);
+        transition: box-shadow 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 2px 8px var(--pt-border);
+        }
+
+        .o_parcel_kpi_value {
+            font-size: 28px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--pt-text-primary);
+        }
+
+        .o_parcel_kpi_label {
+            font-size: 13px;
+            color: var(--pt-text-secondary);
+            margin-top: 4px;
+        }
+
+        &.o_parcel_kpi_warning .o_parcel_kpi_value { color: var(--pt-warning); }
+        &.o_parcel_kpi_good .o_parcel_kpi_value { color: var(--pt-good); }
+    }
+
+    .o_parcel_chart_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .o_parcel_chart_card {
+        flex: 1 1 380px;
+        min-width: 320px;
+        border: 1px solid var(--pt-border);
+        border-radius: 8px;
+        padding: 16px;
+
+        h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--pt-text-secondary);
+            margin-bottom: 12px;
+        }
+    }
+
+    .o_parcel_bar_row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        .o_parcel_bar_label {
+            flex: 0 0 140px;
+            font-size: 12px;
+            color: var(--pt-text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .o_parcel_bar_track {
+            flex: 1 1 auto;
+            background: var(--pt-gridline);
+            border-radius: 4px;
+            height: 14px;
+            overflow: hidden;
+        }
+
+        .o_parcel_bar_fill {
+            height: 100%;
+            border-radius: 4px;
+            min-width: 2px;
+
+            &.o_parcel_bar_series1 { background: var(--pt-series-1); }
+            &.o_parcel_bar_series2 { background: var(--pt-series-2); }
+        }
+
+        .o_parcel_bar_value {
+            flex: 0 0 48px;
+            text-align: right;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+            color: var(--pt-text-primary);
+        }
+    }
+
+    .o_parcel_barlist_vertical {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        height: 160px;
+        padding-top: 8px;
+    }
+
+    .o_parcel_vbar_col {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        justify-content: flex-end;
+
+        .o_parcel_vbar_track {
+            width: 100%;
+            height: 130px;
+            display: flex;
+            align-items: flex-end;
+            background: var(--pt-gridline);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .o_parcel_vbar_fill {
+            width: 100%;
+            background: var(--pt-series-1);
+            min-height: 2px;
+        }
+
+        .o_parcel_vbar_label {
+            margin-top: 4px;
+            font-size: 10px;
+            color: var(--pt-muted);
+            white-space: nowrap;
+        }
+    }
+}

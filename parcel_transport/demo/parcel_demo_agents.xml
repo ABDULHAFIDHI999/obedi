@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="agent_salim" model="parcel.agent">
+        <field name="name">Salim Hassan</field>
+        <field name="phone">+255 713 000 111</field>
+        <field name="station">Dar es Salaam</field>
+    </record>
+
+    <record id="agent_fatuma" model="parcel.agent">
+        <field name="name">Fatuma Rajabu</field>
+        <field name="phone">+255 713 000 222</field>
+        <field name="station">Mbeya</field>
+    </record>
+
+</odoo>

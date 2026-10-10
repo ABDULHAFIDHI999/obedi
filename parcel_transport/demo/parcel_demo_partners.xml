@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="partner_abc_trading" model="res.partner">
+        <field name="name">ABC Trading Ltd</field>
+        <field name="is_company" eval="True"/>
+        <field name="city">Dar es Salaam</field>
+        <field name="phone">+255 712 345 678</field>
+        <field name="email">info@abctrading.example</field>
+    </record>
+
+    <record id="partner_xyz_hardware" model="res.partner">
+        <field name="name">XYZ Hardware Ltd</field>
+        <field name="is_company" eval="True"/>
+        <field name="city">Mbeya</field>
+        <field name="phone">+255 754 987 654</field>
+        <field name="email">info@xyzhardware.example</field>
+    </record>
+
+    <record id="partner_juma_mwenda" model="res.partner">
+        <field name="name">Juma Mwenda</field>
+        <field name="city">Dodoma</field>
+        <field name="phone">+255 767 112 233</field>
+    </record>
+
+    <record id="partner_asha_kileo" model="res.partner">
+        <field name="name">Asha Kileo</field>
+        <field name="city">Arusha</field>
+        <field name="phone">+255 689 445 566</field>
+    </record>
+
+</odoo>

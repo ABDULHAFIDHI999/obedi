@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="seq_parcel_order" model="ir.sequence">
+        <field name="name">Parcel Order Number</field>
+        <field name="code">parcel.order</field>
+        <field name="prefix">PCL/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_parcel_order_tracking" model="ir.sequence">
+        <field name="name">Parcel Tracking Number</field>
+        <field name="code">parcel.order.tracking</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_parcel_trip" model="ir.sequence">
+        <field name="name">Parcel Trip Number</field>
+        <field name="code">parcel.trip</field>
+        <field name="prefix">TRIP/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_parcel_payment" model="ir.sequence">
+        <field name="name">Parcel Payment Number</field>
+        <field name="code">parcel.payment</field>
+        <field name="prefix">PAY/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_parcel_agent" model="ir.sequence">
+        <field name="name">Parcel Agent Code</field>
+        <field name="code">parcel.agent</field>
+        <field name="prefix">AGT-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>
