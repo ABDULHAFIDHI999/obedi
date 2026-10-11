@@ -24,8 +24,11 @@ def _get_or_create_account(env, company, code, name, account_type):
 
 
 def _get_or_create_liquidity_journal(env, company, code, name, default_account):
+    # Odoo 20 already creates a journal for every new asset_cash account, so reuse the journal
+    # using that account before creating one - otherwise "Cash"/"Mobile Money" end up duplicated.
     journal = env['account.journal'].search([
-        ('company_id', '=', company.id), ('code', '=', code),
+        ('company_id', '=', company.id),
+        '|', ('code', '=', code), ('default_account_id', '=', default_account.id),
     ], limit=1)
     if not journal:
         journal = env['account.journal'].create({

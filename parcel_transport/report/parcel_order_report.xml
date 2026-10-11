@@ -79,7 +79,7 @@
                     </div>
                     <div style="text-align:center; margin-top:4px; font-size:10px;">
                         Keep this receipt. Track your parcel at:<br/>
-                        <t t-esc="o._get_tracking_url()"/>
+                        <t t-out="o._get_tracking_url()"/>
                     </div>
                     <div style="text-align:center; margin-top:6px; font-size:10px; font-style:italic;">
                         Thank you for choosing us!
