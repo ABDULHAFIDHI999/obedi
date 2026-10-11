@@ -17,6 +17,14 @@
                                         icon="oi-arrow-right"/>
                             </div>
                         </setting>
+                        <setting string="Message Templates"
+                                 help="Edit the wording of every SMS/WhatsApp notification, and who it is sent to (sender or receiver), for each parcel checkpoint.">
+                            <div class="content-group">
+                                <button name="%(action_parcel_message_template)d" type="action"
+                                        string="Edit Message Templates" class="btn-link"
+                                        icon="oi-arrow-right"/>
+                            </div>
+                        </setting>
                     </block>
                     <block title="Delivery Policy" id="parcel_delivery_setting">
                         <setting string="Require payment authorization before delivery"

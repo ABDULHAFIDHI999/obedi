@@ -66,6 +66,10 @@ class ParcelOrder(models.Model):
     quantity = fields.Float(string="Quantity", default=1.0, required=True)
     weight = fields.Float(string="Weight (kg)")
     dimensions = fields.Char(string="Dimensions (LxWxH cm)")
+    declared_value = fields.Monetary(
+        string="Declared Value", currency_field='currency_id', tracking=True,
+        help="Value of the parcel's contents, declared by the sender when the parcel is "
+             "received at the office (used as reference for insurance/compensation purposes).")
 
     transport_fee = fields.Monetary(string="Transportation Fee", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id.id)
@@ -193,6 +197,10 @@ class ParcelOrder(models.Model):
             })
             order.message_post(body=_("Parcel received at %s by %s.", order.origin, self.env.user.name))
             order._send_parcel_sms('received')
+        # Printing the parcel label is part of the receiving step itself: open it immediately
+        # so it can be stuck on the parcel right away. Can also be reprinted later from the
+        # "Print Label" button on the form.
+        return self.env.ref('parcel_transport.action_report_parcel_label').report_action(self)
 
     def action_mark_ready_dispatch(self):
         for order in self:
@@ -210,7 +218,8 @@ class ParcelOrder(models.Model):
                 'dispatched_by': self.env.user.id,
                 'dispatch_date': fields.Datetime.now(),
             })
-            order._send_parcel_sms('dispatched')
+            # No notification on dispatch itself - sender was already notified on receiving,
+            # and the receiver is only notified once the parcel actually reaches destination.
             # No separate real-world event between leaving the dock and being on the road: the
             # order immediately moves into transit, logged as its own tracked transition.
             order.state = 'in_transit'
@@ -326,46 +335,24 @@ class ParcelOrder(models.Model):
         return "%s/track/%s" % (base_url, self.tracking_number)
 
     def _get_sms_template(self, sms_type):
+        """Return (rendered_message, recipient) for `sms_type`, using the admin-editable
+        parcel.message.template (Configuration > Message Templates). Returns (False, False) if
+        no active template is configured for that event - the event is then silently skipped,
+        same "best effort" spirit as before."""
         self.ensure_one()
-        company = self.company_id.name or _("our company")
-        tracking_url = self._get_tracking_url()
-        templates = {
-            'received': _(
-                "Your parcel %(tracking)s has been received by %(company)s. Destination: %(destination)s. "
-                "Track your parcel: %(url)s",
-                tracking=self.tracking_number, company=company, destination=self.destination, url=tracking_url),
-            'dispatched': _(
-                "Parcel %(tracking)s has been dispatched from %(origin)s to %(destination)s. "
-                "Track: %(url)s",
-                tracking=self.tracking_number, origin=self.origin, destination=self.destination, url=tracking_url),
-            'arrived': _(
-                "Your parcel %(tracking)s has arrived at our %(destination)s destination. "
-                "Please visit/await delivery from %(company)s. Track: %(url)s",
-                tracking=self.tracking_number, destination=self.destination, company=company, url=tracking_url),
-            'ready_collection': _(
-                "Parcel %(tracking)s is ready for collection at %(destination)s. Track: %(url)s",
-                tracking=self.tracking_number, destination=self.destination, url=tracking_url),
-            'delivered': _(
-                "Parcel %(tracking)s has been delivered. Thank you for using %(company)s. Track: %(url)s",
-                tracking=self.tracking_number, company=company, url=tracking_url),
-            'payment_received': _(
-                "Payment received for parcel %(tracking)s. Thank you. Track: %(url)s",
-                tracking=self.tracking_number, url=tracking_url),
-            'payment_outstanding': _(
-                "Payment is still outstanding for parcel %(tracking)s. Track: %(url)s",
-                tracking=self.tracking_number, url=tracking_url),
-        }
-        return templates.get(sms_type, _(
-            "Update on your parcel %(tracking)s. Track: %(url)s",
-            tracking=self.tracking_number, url=tracking_url))
+        template = self.env['parcel.message.template'].sudo().search([('sms_type', '=', sms_type)], limit=1)
+        if not template:
+            return False, False
+        return template._render(self), template.recipient
 
     def _send_parcel_sms(self, sms_type):
         self.ensure_one()
-        # sender-facing events vs receiver-facing events
-        recipient_is_sender = sms_type in ('received', 'dispatched', 'payment_received', 'payment_outstanding')
+        message, recipient = self._get_sms_template(sms_type)
+        if not message:
+            return False
+        recipient_is_sender = recipient == 'sender'
         phone = self.sender_phone if recipient_is_sender else self.receiver_phone
         partner = self.sender_id if recipient_is_sender else self.receiver_id
-        message = self._get_sms_template(sms_type)
         return self.env['parcel.sms.history'].send_sms(
             sms_type, phone, message, parcel_order=self, partner=partner)
 

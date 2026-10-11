@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Sized for an 80mm thermal receipt printer, same paper format as the Parcel Receipt
+         (see report/parcel_order_report.xml) - the resulting PDF can be sent to any thermal
+         receipt printer installed as a normal system printer via the browser's Print dialog. -->
     <record id="action_report_parcel_payment" model="ir.actions.report">
         <field name="name">Payment Receipt</field>
         <field name="model">parcel.payment</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">parcel_transport.report_parcel_payment_document</field>
         <field name="print_report_name">'Payment Receipt - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="paperformat_parcel_thermal_receipt"/>
         <field name="binding_model_id" ref="model_parcel_payment"/>
         <field name="binding_type">report</field>
     </record>
@@ -14,47 +18,53 @@
     <template id="report_parcel_payment_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.external_layout">
-                    <div class="page">
-                        <h2>Payment Receipt</h2>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Receipt Number:</strong> <span t-field="o.name"/><br/>
-                                <strong>Payment Date:</strong> <span t-field="o.payment_date"/><br/>
-                                <strong>Payment Method:</strong> <span t-field="o.payment_method"/><br/>
-                                <strong>Status:</strong> <span t-field="o.state"/>
-                            </div>
-                            <div class="col-6">
-                                <strong>Parcel Tracking Number:</strong> <span t-field="o.parcel_order_id.tracking_number"/><br/>
-                                <strong>Origin:</strong> <span t-field="o.parcel_order_id.origin"/><br/>
-                                <strong>Destination:</strong> <span t-field="o.parcel_order_id.destination"/>
-                            </div>
-                        </div>
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Customer</th>
-                                    <th>Reference</th>
-                                    <th>Amount</th>
-                                    <th>Authorized By</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span t-field="o.partner_id"/></td>
-                                    <td><span t-field="o.reference"/></td>
-                                    <td><span t-field="o.amount"/></td>
-                                    <td>
-                                        <span t-field="o.authorized_by" t-if="o.authorized_by"/>
-                                        <span t-field="o.authorized_by_agent_id" t-if="o.authorized_by_agent_id"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <p t-if="o.notes"><strong>Notes:</strong> <span t-field="o.notes"/></p>
-                        <p class="text-muted">Thank you for your payment. Keep this receipt as proof of payment.</p>
+                <div style="width:74mm; margin:0 auto; padding-bottom:4mm; font-family:Helvetica,Arial,sans-serif; font-size:11px; color:#000; line-height:1.35;">
+                    <div style="text-align:center;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-width:55mm; max-height:18mm;"/>
+                        <div style="font-size:14px; font-weight:bold; margin-top:2px;" t-field="o.company_id.name"/>
+                        <div t-if="o.company_id.phone" t-field="o.company_id.phone"/>
                     </div>
-                </t>
+                    <div style="border-top:1px dashed #000; border-bottom:1px dashed #000; padding:3px 0; margin:5px 0; text-align:center; font-size:13px; font-weight:bold; letter-spacing:1px;">
+                        PAYMENT RECEIPT
+                    </div>
+                    <table style="width:100%;">
+                        <tr><td>Receipt #</td><td style="text-align:right; font-weight:bold;"><span t-field="o.name"/></td></tr>
+                        <tr><td>Date</td><td style="text-align:right;"><span t-field="o.payment_date"/></td></tr>
+                        <tr><td>Method</td><td style="text-align:right;"><span t-field="o.payment_method"/></td></tr>
+                        <tr><td>Status</td><td style="text-align:right;"><span t-field="o.state"/></td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:4px 0;"/>
+                    <table style="width:100%;">
+                        <tr><td>Parcel #</td><td style="text-align:right;"><span t-field="o.parcel_order_id.tracking_number"/></td></tr>
+                        <tr><td>Origin</td><td style="text-align:right;"><span t-field="o.parcel_order_id.origin"/></td></tr>
+                        <tr><td>Destination</td><td style="text-align:right;"><span t-field="o.parcel_order_id.destination"/></td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:4px 0;"/>
+                    <div style="font-weight:bold;">Customer</div>
+                    <table style="width:100%;">
+                        <tr><td><span t-field="o.partner_id.name"/></td></tr>
+                        <tr t-if="o.reference"><td style="color:#555;">Ref: <span t-field="o.reference"/></td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:4px 0;"/>
+                    <table style="width:100%; font-size:14px;">
+                        <tr><td style="font-weight:bold;">Amount</td><td style="text-align:right; font-weight:bold;"><span t-field="o.amount"/></td></tr>
+                    </table>
+                    <table style="width:100%; font-size:11px; margin-top:2px;">
+                        <tr t-if="o.authorized_by"><td>Authorized By</td><td style="text-align:right;"><span t-field="o.authorized_by.name"/></td></tr>
+                        <tr t-if="o.authorized_by_agent_id"><td>Authorized By</td><td style="text-align:right;"><span t-field="o.authorized_by_agent_id.name"/></td></tr>
+                    </table>
+                    <div t-if="o.notes" style="margin-top:4px; font-size:10px;">
+                        <strong>Notes:</strong> <span t-field="o.notes"/>
+                    </div>
+                    <div style="border-top:1px dashed #000; margin:6px 0;"/>
+                    <div style="text-align:center;">
+                        <img t-attf-src="/report/barcode/?barcode_type=Code128&amp;value={{o.name}}&amp;width=280&amp;height=45&amp;humanreadable=0" style="max-width:100%;"/>
+                    </div>
+                    <div style="text-align:center; margin-top:6px; font-size:10px; font-style:italic;">
+                        Thank you for your payment. Keep this receipt as proof of payment.
+                    </div>
+                </div>
+                <p t-if="not o_last" style="page-break-after:always;"/>
             </t>
         </t>
     </template>

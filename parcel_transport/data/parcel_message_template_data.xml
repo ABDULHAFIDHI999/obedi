@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of AMASE Digital Demo Logistics. See LICENSE file for full copyright and licensing details.
+
+     Default wording for every SMS/WhatsApp notification event. noupdate="1" so an
+     administrator's edits in Configuration > Message Templates survive module updates. -->
+<odoo noupdate="1">
+
+    <record id="parcel_message_template_received" model="parcel.message.template">
+        <field name="sequence">10</field>
+        <field name="sms_type">received</field>
+        <field name="recipient">sender</field>
+        <field name="body">Your parcel {tracking} has been received by {company}. Destination: {destination}. Track your parcel: {url}</field>
+    </record>
+
+    <record id="parcel_message_template_arrived" model="parcel.message.template">
+        <field name="sequence">20</field>
+        <field name="sms_type">arrived</field>
+        <field name="recipient">receiver</field>
+        <field name="body">Your parcel {tracking} has arrived at our {destination} destination. Please visit/await delivery from {company}. Track: {url}</field>
+    </record>
+
+    <record id="parcel_message_template_ready_collection" model="parcel.message.template">
+        <field name="sequence">30</field>
+        <field name="sms_type">ready_collection</field>
+        <field name="recipient">receiver</field>
+        <field name="body">Parcel {tracking} is ready for collection at {destination}. Track: {url}</field>
+    </record>
+
+    <record id="parcel_message_template_delivered" model="parcel.message.template">
+        <field name="sequence">40</field>
+        <field name="sms_type">delivered</field>
+        <field name="recipient">receiver</field>
+        <field name="body">Parcel {tracking} has been delivered. Thank you for using {company}. Track: {url}</field>
+    </record>
+
+    <record id="parcel_message_template_payment_received" model="parcel.message.template">
+        <field name="sequence">50</field>
+        <field name="sms_type">payment_received</field>
+        <field name="recipient">receiver</field>
+        <field name="body">Payment received for parcel {tracking}. Thank you. Track: {url}</field>
+    </record>
+
+</odoo>

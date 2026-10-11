@@ -35,6 +35,8 @@
                     <button name="action_return" string="Return" type="object"
                             invisible="state not in ('arrived', 'ready_collection', 'out_for_delivery')"
                             groups="parcel_transport.group_parcel_dispatcher"/>
+                    <button name="%(parcel_transport.action_report_parcel_label)d" string="Print Label" type="action"
+                            invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,received,ready_dispatch,dispatched,in_transit,arrived,ready_collection,out_for_delivery,delivered"/>
                 </header>
@@ -85,6 +87,7 @@
                             <field name="quantity"/>
                             <field name="weight"/>
                             <field name="dimensions"/>
+                            <field name="declared_value"/>
                             <field name="description"/>
                         </group>
                         <group string="Payment">
