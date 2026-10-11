@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- A standard 4x6 inch (100x150mm) shipping label size, supported by most label/thermal
+         printers (Zebra, etc.) as well as any regular printer. -->
+    <record id="paperformat_parcel_label" model="report.paperformat">
+        <field name="name">Parcel Label (100x150mm)</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">150</field>
+        <field name="page_width">100</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_parcel_label" model="ir.actions.report">
+        <field name="name">Parcel Label</field>
+        <field name="model">parcel.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">parcel_transport.report_parcel_label_document</field>
+        <field name="print_report_name">'Parcel Label - %s' % (object.tracking_number)</field>
+        <field name="paperformat_id" ref="paperformat_parcel_label"/>
+        <field name="binding_model_id" ref="model_parcel_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_parcel_label_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div style="width:94mm; min-height:144mm; margin:0 auto; font-family:Helvetica,Arial,sans-serif; border:1.5pt solid #1F2D3D; border-radius:4px; overflow:hidden; box-sizing:border-box;">
+                    <!-- Header: company branding -->
+                    <div style="text-align:center; padding:4mm 3mm 3mm 3mm; border-bottom:1pt dashed #1F2D3D;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-width:60mm; max-height:16mm;"/>
+                        <div style="font-size:13px; font-weight:bold; margin-top:2px;" t-field="o.company_id.name"/>
+                    </div>
+
+                    <!-- Banner -->
+                    <div style="background-color:#1F2D3D; color:#FFFFFF; text-align:center; padding:2.5mm 0; font-size:14px; font-weight:bold; letter-spacing:2px;">
+                        PARCEL LABEL
+                    </div>
+
+                    <!-- Tracking number + barcode -->
+                    <div style="text-align:center; padding:4mm 3mm 3mm 3mm;">
+                        <div style="font-size:11px; color:#5A6472;">TRACKING NUMBER</div>
+                        <div style="font-size:19px; font-weight:bold; letter-spacing:1px; margin:1mm 0 2mm 0;" t-field="o.tracking_number"/>
+                        <img t-attf-src="/report/barcode/?barcode_type=Code128&amp;value={{o.tracking_number}}&amp;width=340&amp;height=60&amp;humanreadable=0" style="max-width:100%;"/>
+                    </div>
+
+                    <div style="border-top:1pt dashed #1F2D3D; margin:0 3mm;"/>
+
+                    <!-- Receiver -->
+                    <div style="padding:3mm 4mm;">
+                        <div style="font-size:11px; color:#5A6472; font-weight:bold;">DELIVER TO</div>
+                        <div style="font-size:17px; font-weight:bold; margin:1mm 0;" t-field="o.receiver_id.name"/>
+                        <div style="font-size:14px;">
+                            <span style="color:#5A6472;">Tel: </span><span t-field="o.receiver_phone"/>
+                        </div>
+                    </div>
+
+                    <div style="border-top:1pt dashed #1F2D3D; margin:0 3mm;"/>
+
+                    <!-- Route -->
+                    <table style="width:100%; padding:3mm 4mm; font-size:12px;">
+                        <tr>
+                            <td style="width:50%;">
+                                <div style="color:#5A6472; font-size:10px;">FROM</div>
+                                <div style="font-weight:bold;" t-field="o.origin"/>
+                            </td>
+                            <td style="width:50%; text-align:right;">
+                                <div style="color:#5A6472; font-size:10px;">TO</div>
+                                <div style="font-weight:bold;" t-field="o.destination"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Parcel info footer -->
+                    <table style="width:100%; padding:2mm 4mm; font-size:11px; color:#333;">
+                        <tr>
+                            <td>Type: <span t-field="o.parcel_type_id.name"/></td>
+                            <td style="text-align:right;">Qty: <span t-field="o.quantity"/></td>
+                        </tr>
+                        <tr t-if="o.weight">
+                            <td colspan="2">Weight: <span t-field="o.weight"/> kg</td>
+                        </tr>
+                    </table>
+
+                    <div style="text-align:center; font-size:9px; color:#5A6472; padding:2mm 0 1mm 0;">
+                        Handle with care &#8226; Received <span t-field="o.received_date"/>
+                    </div>
+                </div>
+                <p t-if="not o_last" style="page-break-after:always;"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

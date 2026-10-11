@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_parcel_product_type_list" model="ir.ui.view">
+        <field name="name">product.template.parcel.type.list</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <list string="Parcel Types">
+                <field name="name"/>
+                <field name="list_price"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_parcel_product_type" model="ir.actions.act_window">
+        <field name="name">Parcel Types</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_parcel_product_type_list"/>
+        <field name="domain">[('parcel_is_type', '=', True)]</field>
+        <field name="context">{'default_parcel_is_type': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first Parcel Type</p>
+            <p>Parcel Types (e.g. Envelope, Small Box, Medium Box, Pallet...) are what gets
+               selected on a Parcel Order. Create or edit them here directly - no need to go
+               through the full Products app.</p>
+        </field>
+    </record>
+
+</odoo>

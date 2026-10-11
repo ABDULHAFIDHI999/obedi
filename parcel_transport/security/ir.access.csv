@@ -19,6 +19,7 @@ access_parcel_sms_history_admin,parcel.sms.history.admin,parcel.sms.history,grou
 access_parcel_sms_history_origin,parcel.sms.history.origin,parcel.sms.history,group_parcel_origin_agent,cru,
 access_parcel_sms_history_dispatcher,parcel.sms.history.dispatcher,parcel.sms.history,group_parcel_dispatcher,cru,
 access_parcel_sms_history_finance,parcel.sms.history.finance,parcel.sms.history,group_parcel_finance_agent,cru,
+access_parcel_message_template_admin,parcel.message.template.admin,parcel.message.template,group_parcel_administrator,crud,
 access_parcel_arrival_wizard_admin,parcel.arrival.authorize.wizard.admin,parcel.arrival.authorize.wizard,group_parcel_administrator,crud,
 access_parcel_arrival_wizard_dispatcher,parcel.arrival.authorize.wizard.dispatcher,parcel.arrival.authorize.wizard,group_parcel_dispatcher,crud,
 access_parcel_delivery_wizard_admin,parcel.delivery.authorize.wizard.admin,parcel.delivery.authorize.wizard,group_parcel_administrator,crud,

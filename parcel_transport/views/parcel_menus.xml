@@ -32,6 +32,14 @@
               action="base.action_res_users" sequence="20"
               groups="parcel_transport.group_parcel_administrator"/>
 
+    <menuitem id="menu_parcel_configuration_message_templates" name="Message Templates"
+              parent="menu_parcel_configuration" action="action_parcel_message_template" sequence="25"
+              groups="parcel_transport.group_parcel_administrator"/>
+
+    <menuitem id="menu_parcel_configuration_product_type" name="Parcel Types"
+              parent="menu_parcel_configuration" action="action_parcel_product_type" sequence="15"
+              groups="parcel_transport.group_parcel_administrator"/>
+
     <menuitem id="menu_parcel_configuration_settings" name="Settings" parent="menu_parcel_configuration"
               action="action_parcel_config_settings" sequence="99"
               groups="parcel_transport.group_parcel_administrator"/>

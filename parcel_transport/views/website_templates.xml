@@ -12,7 +12,7 @@
             <section class="o_parcel_home_hero" data-snippet="s_parcel_home_hero">
                 <div class="container">
                     <div class="o_parcel_home_hero_inner text-center">
-                        <h1 t-esc="res_company.name or 'Track Your Parcel'"/>
+                        <h1 t-out="res_company.name or 'Track Your Parcel'"/>
                         <p class="o_parcel_home_hero_subtitle">Track Your Parcel</p>
                         <p class="text-muted">Enter your tracking number to see its current status. No account needed.</p>
                         <form method="get" action="/track" class="o_parcel_track_form">
@@ -59,30 +59,30 @@
 
                 <t t-if="searched and not result">
                     <div class="alert alert-warning o_parcel_track_notfound" role="alert">
-                        No parcel found for tracking number "<t t-esc="tracking_number"/>". Please check the number and try again.
+                        No parcel found for tracking number "<t t-out="tracking_number"/>". Please check the number and try again.
                     </div>
                 </t>
 
                 <t t-if="result">
                     <div class="o_parcel_track_result">
-                        <h3>PARCEL <t t-esc="result['tracking_number']"/></h3>
+                        <h3>PARCEL <t t-out="result['tracking_number']"/></h3>
                         <div class="o_parcel_route">
-                            <span class="o_parcel_route_point"><t t-esc="result['origin']"/></span>
+                            <span class="o_parcel_route_point"><t t-out="result['origin']"/></span>
                             <span class="o_parcel_route_arrow">&#8594;</span>
-                            <span class="o_parcel_route_status"><t t-esc="result['status']"/></span>
+                            <span class="o_parcel_route_status"><t t-out="result['status']"/></span>
                             <span class="o_parcel_route_arrow">&#8594;</span>
-                            <span class="o_parcel_route_point"><t t-esc="result['destination']"/></span>
+                            <span class="o_parcel_route_point"><t t-out="result['destination']"/></span>
                         </div>
 
                         <table class="o_parcel_track_table">
                             <tr t-if="result['date_received']">
-                                <td>Date Received</td><td><t t-esc="result['date_received']"/></td>
+                                <td>Date Received</td><td><t t-out="result['date_received']"/></td>
                             </tr>
                             <tr t-if="result['expected_arrival_date']">
-                                <td>Estimated Arrival</td><td><t t-esc="result['expected_arrival_date']"/></td>
+                                <td>Estimated Arrival</td><td><t t-out="result['expected_arrival_date']"/></td>
                             </tr>
                             <tr>
-                                <td>Current Status</td><td><strong><t t-esc="result['status']"/></strong></td>
+                                <td>Current Status</td><td><strong><t t-out="result['status']"/></strong></td>
                             </tr>
                         </table>
 
@@ -93,7 +93,7 @@
                                     <t t-if="step['done']">&#10003;</t>
                                     <t t-else="">&#9675;</t>
                                 </span>
-                                <span class="o_parcel_timeline_label"><t t-esc="step['label']"/></span>
+                                <span class="o_parcel_timeline_label"><t t-out="step['label']"/></span>
                             </li>
                         </ul>
                     </div>
@@ -132,7 +132,7 @@
 
                 <t t-if="result and result.get('error')">
                     <div class="alert alert-danger o_parcel_agent_result" role="alert">
-                        <t t-esc="result['error']"/>
+                        <t t-out="result['error']"/>
                     </div>
                 </t>
 
@@ -140,27 +140,27 @@
                     <div class="o_parcel_agent_status">
                         <t t-if="result.get('message')">
                             <div class="alert alert-success" role="alert">
-                                <t t-esc="result['message']"/>
+                                <t t-out="result['message']"/>
                             </div>
                         </t>
 
-                        <h3>PARCEL <t t-esc="result['tracking_number']"/></h3>
+                        <h3>PARCEL <t t-out="result['tracking_number']"/></h3>
                         <div class="o_parcel_route">
-                            <span class="o_parcel_route_point"><t t-esc="result['origin']"/></span>
+                            <span class="o_parcel_route_point"><t t-out="result['origin']"/></span>
                             <span class="o_parcel_route_arrow">&#8594;</span>
-                            <span class="o_parcel_route_status"><t t-esc="result['status']"/></span>
+                            <span class="o_parcel_route_status"><t t-out="result['status']"/></span>
                             <span class="o_parcel_route_arrow">&#8594;</span>
-                            <span class="o_parcel_route_point"><t t-esc="result['destination']"/></span>
+                            <span class="o_parcel_route_point"><t t-out="result['destination']"/></span>
                         </div>
 
                         <table class="o_parcel_track_table">
                             <tr>
                                 <td>Payment Status</td>
-                                <td><strong><t t-esc="result['payment_status_label']"/></strong></td>
+                                <td><strong><t t-out="result['payment_status_label']"/></strong></td>
                             </tr>
                             <tr t-if="result['outstanding']">
                                 <td>Amount Outstanding</td>
-                                <td><t t-esc="result['outstanding']"/></td>
+                                <td><t t-out="result['outstanding']"/></td>
                             </tr>
                         </table>
 

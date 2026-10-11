@@ -1,5 +1,6 @@
 from . import res_config_settings
 from . import product_template
+from . import parcel_message_template
 from . import parcel_sms_history
 from . import parcel_payment
 from . import parcel_agent

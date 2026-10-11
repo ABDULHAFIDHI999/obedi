@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Sized for an 80mm thermal receipt printer. The resulting PDF can be sent to any thermal
+         receipt printer that is installed as a normal system printer (e.g. Epson/Star/Xprinter
+         with their standard driver) via the browser's Print dialog, or attached/sent as-is
+         (e.g. over WhatsApp). -->
+    <record id="paperformat_parcel_thermal_receipt" model="report.paperformat">
+        <field name="name">Parcel Thermal Receipt (80mm)</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">80</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">2</field>
+        <field name="margin_right">2</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
     <record id="action_report_parcel_order" model="ir.actions.report">
         <field name="name">Parcel Receipt</field>
         <field name="model">parcel.order</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">parcel_transport.report_parcel_order_document</field>
         <field name="print_report_name">'Parcel Receipt - %s' % (object.tracking_number)</field>
+        <field name="paperformat_id" ref="paperformat_parcel_thermal_receipt"/>
         <field name="binding_model_id" ref="model_parcel_order"/>
         <field name="binding_type">report</field>
     </record>
@@ -14,46 +35,57 @@
     <template id="report_parcel_order_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.external_layout">
-                    <div class="page">
-                        <h2>Parcel Receipt</h2>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Tracking Number:</strong> <span t-field="o.tracking_number"/><br/>
-                                <strong>Parcel Order:</strong> <span t-field="o.name"/><br/>
-                                <strong>Status:</strong> <span t-field="o.state"/>
-                            </div>
-                            <div class="col-6">
-                                <strong>Origin:</strong> <span t-field="o.origin"/><br/>
-                                <strong>Destination:</strong> <span t-field="o.destination"/><br/>
-                                <strong>Expected Arrival:</strong> <span t-field="o.expected_arrival_date"/>
-                            </div>
-                        </div>
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Sender</th>
-                                    <th>Receiver</th>
-                                    <th>Parcel Type</th>
-                                    <th>Qty</th>
-                                    <th>Weight</th>
-                                    <th>Fee</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span t-field="o.sender_id"/><br/><span t-field="o.sender_phone"/></td>
-                                    <td><span t-field="o.receiver_id"/><br/><span t-field="o.receiver_phone"/></td>
-                                    <td><span t-field="o.parcel_type_id"/></td>
-                                    <td><span t-field="o.quantity"/></td>
-                                    <td><span t-field="o.weight"/> kg</td>
-                                    <td><span t-field="o.transport_fee"/></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <p class="text-muted">Keep this receipt. Use your tracking number to follow your parcel on our website.</p>
+                <div style="width:74mm; margin:0 auto; padding-bottom:4mm; font-family:Helvetica,Arial,sans-serif; font-size:11px; color:#000; line-height:1.35;">
+                    <div style="text-align:center;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-width:55mm; max-height:18mm;"/>
+                        <div style="font-size:14px; font-weight:bold; margin-top:2px;" t-field="o.company_id.name"/>
+                        <div t-if="o.company_id.phone" t-field="o.company_id.phone"/>
                     </div>
-                </t>
+                    <div style="border-top:1px dashed #000; border-bottom:1px dashed #000; padding:3px 0; margin:5px 0; text-align:center; font-size:13px; font-weight:bold; letter-spacing:1px;">
+                        PARCEL RECEIPT
+                    </div>
+                    <table style="width:100%;">
+                        <tr><td>Tracking #</td><td style="text-align:right; font-weight:bold;"><span t-field="o.tracking_number"/></td></tr>
+                        <tr><td>Order</td><td style="text-align:right;"><span t-field="o.name"/></td></tr>
+                        <tr><td>Status</td><td style="text-align:right;"><span t-field="o.state"/></td></tr>
+                        <tr><td>Date</td><td style="text-align:right;"><span t-field="o.received_date"/></td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:4px 0;"/>
+                    <div style="font-weight:bold;">Sender</div>
+                    <table style="width:100%;">
+                        <tr><td><span t-field="o.sender_id.name"/></td><td style="text-align:right;"><span t-field="o.sender_phone"/></td></tr>
+                    </table>
+                    <div style="font-weight:bold; margin-top:3px;">Receiver</div>
+                    <table style="width:100%;">
+                        <tr><td><span t-field="o.receiver_id.name"/></td><td style="text-align:right;"><span t-field="o.receiver_phone"/></td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:4px 0;"/>
+                    <table style="width:100%;">
+                        <tr><td>Origin</td><td style="text-align:right;"><span t-field="o.origin"/></td></tr>
+                        <tr><td>Destination</td><td style="text-align:right;"><span t-field="o.destination"/></td></tr>
+                        <tr><td>Parcel Type</td><td style="text-align:right;"><span t-field="o.parcel_type_id.name"/></td></tr>
+                        <tr><td>Qty</td><td style="text-align:right;"><span t-field="o.quantity"/></td></tr>
+                        <tr><td>Weight</td><td style="text-align:right;"><span t-field="o.weight"/> kg</td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:4px 0;"/>
+                    <table style="width:100%; font-size:12px;">
+                        <tr t-if="o.declared_value"><td>Declared Value</td><td style="text-align:right;"><span t-field="o.declared_value"/></td></tr>
+                        <tr><td style="font-weight:bold;">Transport Fee</td><td style="text-align:right; font-weight:bold;"><span t-field="o.transport_fee"/></td></tr>
+                        <tr><td>Amount Paid</td><td style="text-align:right;"><span t-field="o.amount_paid"/></td></tr>
+                    </table>
+                    <div style="border-top:1px dashed #000; margin:6px 0;"/>
+                    <div style="text-align:center;">
+                        <img t-attf-src="/report/barcode/?barcode_type=Code128&amp;value={{o.tracking_number}}&amp;width=280&amp;height=45&amp;humanreadable=0" style="max-width:100%;"/>
+                    </div>
+                    <div style="text-align:center; margin-top:4px; font-size:10px;">
+                        Keep this receipt. Track your parcel at:<br/>
+                        <t t-out="o._get_tracking_url()"/>
+                    </div>
+                    <div style="text-align:center; margin-top:6px; font-size:10px; font-style:italic;">
+                        Thank you for choosing us!
+                    </div>
+                </div>
+                <p t-if="not o_last" style="page-break-after:always;"/>
             </t>
         </t>
     </template>

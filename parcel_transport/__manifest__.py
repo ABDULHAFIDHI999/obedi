@@ -22,6 +22,12 @@ Features:
   message sent here goes through SwalaSMS once configured there, with a mock/test provider used
   automatically until then
 * SMS history log with retry support
+* Admin-editable message templates (Configuration > Message Templates) for every notification
+  event, including who it goes to (sender or receiver)
+* Declared value captured on the parcel at receiving time
+* Thermal-paper parcel receipt (printable on a thermal receipt printer) and a parcel label
+  (tracking number, barcode, receiver details, company logo) printed automatically when a
+  parcel is received
 * Public, login-free parcel tracking page on the website
 * Exactly 4 role-based security groups: Administrator (full access), Receiving Officer (create,
   receive, assign to Trip, mark ready for dispatch), Dispatcher (manage/dispatch Trips, plus a
@@ -48,9 +54,11 @@ Features:
 
         # data
         'data/ir_sequence_data.xml',
+        'data/parcel_message_template_data.xml',
 
         # reports (loaded before views so views can reference report actions by xmlid)
         'report/parcel_order_report.xml',
+        'report/parcel_label_report.xml',
         'report/parcel_payment_report.xml',
 
         # views
@@ -59,6 +67,8 @@ Features:
         'views/parcel_trip_views.xml',
         'views/parcel_payment_views.xml',
         'views/parcel_sms_history_views.xml',
+        'views/parcel_message_template_views.xml',
+        'views/parcel_product_type_views.xml',
         'views/res_config_settings_views.xml',
         'views/parcel_dashboard_views.xml',
         'views/parcel_menus.xml',
