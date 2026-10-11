@@ -163,13 +163,14 @@ class ParcelOrder(models.Model):
 
     @api.onchange('sender_id')
     def _onchange_sender_id(self):
-        if self.sender_id and self.sender_id.phone:
-            self.sender_phone = self.sender_id.phone or self.sender_id.mobile
+        # Odoo 20 contacts have a single phone field (res.partner.mobile was removed)
+        if self.sender_id.phone:
+            self.sender_phone = self.sender_id.phone
 
     @api.onchange('receiver_id')
     def _onchange_receiver_id(self):
-        if self.receiver_id and (self.receiver_id.phone or self.receiver_id.mobile):
-            self.receiver_phone = self.receiver_id.phone or self.receiver_id.mobile
+        if self.receiver_id.phone:
+            self.receiver_phone = self.receiver_id.phone
 
     @api.model_create_multi
     def create(self, vals_list):
